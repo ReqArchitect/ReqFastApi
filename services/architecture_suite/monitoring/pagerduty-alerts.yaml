@@ -1,0 +1,17 @@
+receivers:
+  - name: 'pagerduty-critical'
+    pagerduty_configs:
+      - service_key: 'PAGERDUTY_SERVICE_KEY'
+        severity: 'critical'
+        send_resolved: true
+        description: '{{ .CommonAnnotations.summary }}'
+route:
+  receiver: 'pagerduty-critical'
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 2m
+  repeat_interval: 30m
+  routes:
+    - match:
+        severity: critical
+      receiver: 'pagerduty-critical'

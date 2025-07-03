@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: architecture-suite
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: architecture-suite
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: architecture-suite
+  template:
+    metadata:
+      labels:
+        app: architecture-suite
+    spec:
+      containers:
+        - name: architecture-suite
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: architecture-suite-config
+            - secretRef:
+                name: architecture-suite-secrets
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}

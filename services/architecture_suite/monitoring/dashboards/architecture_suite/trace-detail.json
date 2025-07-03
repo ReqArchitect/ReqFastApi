@@ -1,0 +1,20 @@
+{
+  "title": "Architecture Suite - Trace Detail",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "Span Duration by Route",
+      "targets": [{"expr": "avg by (route) (architecture_suite_span_duration_seconds)"}]
+    },
+    {
+      "type": "graph",
+      "title": "Error Spans Count",
+      "targets": [{"expr": "sum by (route) (architecture_suite_span_errors_total)"}]
+    },
+    {
+      "type": "table",
+      "title": "Correlation ID Waterfall",
+      "targets": [{"expr": "architecture_suite_correlation_id_waterfall"}]
+    }
+  ]
+}

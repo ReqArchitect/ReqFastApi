@@ -1,0 +1,22 @@
+name: Region Release Validation
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'services/architecture_suite/helm/values.*.yaml'
+
+jobs:
+  validate-helm:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        region: [us-east1, eu-west1]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Helm Lint
+        run: |
+          helm lint ./services/architecture_suite/helm -f ./services/architecture_suite/helm/values.${{ matrix.region }}.yaml
+      - name: Helm Package
+        run: |
+          helm package ./services/architecture_suite/helm -f ./services/architecture_suite/helm/values.${{ matrix.region }}.yaml

@@ -1,0 +1,10 @@
+{
+  "title": "Architecture Suite - Alerts",
+  "panels": [
+    {
+      "type": "table",
+      "title": "Active Alerts",
+      "targets": [{"expr": "ALERTS{alertstate=\"firing\", service=\"architecture_suite\"}"}]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: architecture-suite-alerts
+  namespace: monitoring
+spec:
+  groups:
+    - name: architecture-suite.rules
+      rules:
+        - alert: ArchitectureSuiteHighLatency
+          expr: histogram_quantile(0.95, sum(rate(architecture_suite_request_latency_seconds_bucket[5m])) by (le)) > 0.2
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High latency in architecture_suite (>200ms)"
+        - alert: ArchitectureSuiteHighErrorRate
+          expr: sum(rate(architecture_suite_errors_total[5m])) by (route) / sum(rate(architecture_suite_requests_total[5m])) by (route) > 0.05
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "High error rate in architecture_suite (>5%)"

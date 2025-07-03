@@ -1,0 +1,17 @@
+groups:
+  - name: capability_service.rules
+    rules:
+      - alert: CapabilityServiceHighErrorRate
+        expr: rate(http_requests_total{service="capability_service",status=~"5.."}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: High error rate in capability_service
+      - alert: CapabilityServiceHighLatency
+        expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{service="capability_service"}[5m])) by (le)) > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: High latency in capability_service

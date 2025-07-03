@@ -1,0 +1,10 @@
+{
+  "title": "Architecture Suite - KPI Impact",
+  "panels": [
+    {
+      "type": "table",
+      "title": "KPI Impact Summary",
+      "targets": [{"expr": "architecture_suite_impact_summary"}]
+    }
+  ]
+}

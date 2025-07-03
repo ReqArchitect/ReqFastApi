@@ -1,0 +1,28 @@
+{
+  "dashboard": {
+    "title": "Architecture Suite Service",
+    "panels": [
+      {
+        "type": "graph",
+        "title": "Request Latency (ms)",
+        "targets": [
+          {"expr": "histogram_quantile(0.95, sum(rate(architecture_suite_request_latency_seconds_bucket[5m])) by (le)) * 1000"}
+        ]
+      },
+      {
+        "type": "graph",
+        "title": "Error Rate (%)",
+        "targets": [
+          {"expr": "sum(rate(architecture_suite_errors_total[5m])) by (route) / sum(rate(architecture_suite_requests_total[5m])) by (route) * 100"}
+        ]
+      },
+      {
+        "type": "stat",
+        "title": "Total Requests",
+        "targets": [
+          {"expr": "sum(architecture_suite_requests_total)"}
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "title": "Architecture Suite - Service Overview",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "Request Throughput",
+      "targets": [{"expr": "sum(rate(architecture_suite_requests_total[1m]))"}]
+    },
+    {
+      "type": "graph",
+      "title": "Error Rate (%)",
+      "targets": [{"expr": "job:architecture_suite_error_rate * 100"}]
+    },
+    {
+      "type": "graph",
+      "title": "P95 Latency (ms)",
+      "targets": [{"expr": "job:architecture_suite_p95_latency_seconds * 1000"}]
+    },
+    {
+      "type": "stat",
+      "title": "Uptime (%)",
+      "targets": [{"expr": "avg_over_time(architecture_suite_heartbeat_success[1h]) * 100"}]
+    }
+  ]
+}

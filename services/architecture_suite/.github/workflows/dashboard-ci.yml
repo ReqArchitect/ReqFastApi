@@ -1,0 +1,37 @@
+name: Dashboard Lint & Deploy
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'services/architecture_suite/monitoring/dashboards/**'
+
+jobs:
+  lint-dashboards:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lint Grafana Dashboards
+        run: |
+          npm install -g grafana-dashboard-linter
+          grafana-dashboard-linter services/architecture_suite/monitoring/dashboards/**/*.json
+  deploy-dashboards:
+    needs: lint-dashboards
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy Dashboards to Grafana
+        env:
+          GRAFANA_URL: ${{ secrets.GRAFANA_URL }}
+          GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }}
+        run: |
+          for f in services/architecture_suite/monitoring/dashboards/**/*.json; do
+            curl -X POST "$GRAFANA_URL/api/dashboards/db" \
+              -H "Authorization: Bearer $GRAFANA_API_KEY" \
+              -H "Content-Type: application/json" \
+              -d @"$f"
+          done
+      - name: Tag Dashboard Version
+        run: |
+          git tag dashboard-$(date +'%Y%m%d%H%M%S')
+          git push --tags

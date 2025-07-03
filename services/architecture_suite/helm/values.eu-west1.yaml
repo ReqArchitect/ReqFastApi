@@ -1,0 +1,35 @@
+namespace: architecture-suite-eu-west1
+replicaCount: 2
+image:
+  repository: ghcr.io/your-org/architecture-suite
+  tag: latest
+  pullPolicy: IfNotPresent
+service:
+  type: ClusterIP
+  port: 8000
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: architecture-suite.eu-west1.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+env:
+  REDIS_URL: redis://redis:6379/0
+  DATABASE_URL: postgresql://user:password@postgres:5432/architecture_suite
+  SECRET_KEY: "use-from-secret"
+  ALGORITHM: HS256
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70

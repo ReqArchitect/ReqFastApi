@@ -1,0 +1,21 @@
+{
+  "dashboard": {
+    "title": "Capability Service Overview",
+    "panels": [
+      {
+        "type": "graph",
+        "title": "Request Latency",
+        "targets": [{
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{service=\"capability_service\"}[5m])) by (le))"
+        }]
+      },
+      {
+        "type": "graph",
+        "title": "Error Rate",
+        "targets": [{
+          "expr": "rate(http_requests_total{service=\"capability_service\",status=~\"5..\"}[5m])"
+        }]
+      }
+    ]
+  }
+}

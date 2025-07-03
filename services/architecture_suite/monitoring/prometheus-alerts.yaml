@@ -1,0 +1,48 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: architecture-suite-alerts
+  namespace: monitoring
+spec:
+  groups:
+    - name: architecture-suite.rules
+      rules:
+        # Recording rules
+        - record: job:architecture_suite_p95_latency_seconds
+          expr: histogram_quantile(0.95, sum(rate(architecture_suite_request_latency_seconds_bucket[1m])) by (le))
+        - record: job:architecture_suite_error_rate
+          expr: sum(rate(architecture_suite_errors_total[1m])) / sum(rate(architecture_suite_requests_total[1m]))
+        - record: job:architecture_suite_request_rate
+          expr: sum(rate(architecture_suite_requests_total[1m]))
+        # High latency alert
+        - alert: HighLatencyAlert
+          expr: job:architecture_suite_p95_latency_seconds > 0.5
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "P95 latency > 500ms for 5m"
+        # Error spike alert
+        - alert: ErrorSpikeAlert
+          expr: job:architecture_suite_error_rate > 0.05
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Error rate > 5% for 2m"
+        # Downstream Redis pub/sub failure
+        - alert: DownstreamFailureAlert
+          expr: increase(architecture_suite_redis_pubsub_failures_total[1m]) > 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Redis pub/sub failures detected"
+        # Health check alert
+        - alert: HealthCheckAlert
+          expr: avg_over_time(architecture_suite_heartbeat_success[10m]) < 0.99
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "/health endpoint unavailable or uptime < 99% over 10m"

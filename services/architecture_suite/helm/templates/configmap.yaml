@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: architecture-suite-config
+  namespace: {{ .Values.namespace }}
+data:
+  REDIS_URL: {{ .Values.env.REDIS_URL | quote }}
+  DATABASE_URL: {{ .Values.env.DATABASE_URL | quote }}
+  ALGORITHM: {{ .Values.env.ALGORITHM | quote }}

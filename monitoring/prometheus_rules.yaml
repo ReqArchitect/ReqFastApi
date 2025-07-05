@@ -1,0 +1,21 @@
+groups:
+  - name: performance.rules
+    rules:
+      - record: job:p95_latency_seconds:histogram_quantile
+        expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, job))
+      - record: job:error_rate:ratio
+        expr: sum(rate(http_requests_total{status=~"5.."}[5m])) by (job) / sum(rate(http_requests_total[5m])) by (job)
+      - alert: HighP95Latency
+        expr: job:p95_latency_seconds:histogram_quantile > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: High p95 latency detected
+      - alert: HighErrorRate
+        expr: job:error_rate:ratio > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: High error rate detected

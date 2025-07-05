@@ -1,0 +1,16 @@
+name: Performance Test
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  load-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Locust image
+        run: docker build -t perf-test ./performance
+      - name: Run Locust load test
+        run: docker run --rm perf-test -f /mnt/locust/load_test.py --config /mnt/locust/locust.conf

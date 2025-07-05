@@ -1,0 +1,22 @@
+name: DAST
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  zap_scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start orchestrator and UI
+        run: |
+          docker-compose up -d orchestrator_service unified_model_ui
+      - name: OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.10.0
+        with:
+          target: 'http://localhost:8080'
+      - name: Fail on high/critical findings
+        run: |
+          if grep -q 'FAIL-NEW' zap.out; then exit 1; fi

@@ -1,0 +1,42 @@
+{
+  "dashboard": {
+    "title": "Platform Performance Overview",
+    "panels": [
+      {
+        "type": "graph",
+        "title": "p95 Latency",
+        "targets": [{
+          "expr": "job:p95_latency_seconds:histogram_quantile"
+        }]
+      },
+      {
+        "type": "graph",
+        "title": "Error Rate",
+        "targets": [{
+          "expr": "job:error_rate:ratio"
+        }]
+      },
+      {
+        "type": "graph",
+        "title": "Throughput (req/s)",
+        "targets": [{
+          "expr": "sum(rate(http_requests_total[1m])) by (job)"
+        }]
+      },
+      {
+        "type": "graph",
+        "title": "CPU Usage",
+        "targets": [{
+          "expr": "sum(rate(container_cpu_usage_seconds_total[1m])) by (pod)"
+        }]
+      },
+      {
+        "type": "graph",
+        "title": "Memory Usage",
+        "targets": [{
+          "expr": "sum(container_memory_usage_bytes) by (pod)"
+        }]
+      }
+    ]
+  }
+}

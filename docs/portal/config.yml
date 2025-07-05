@@ -1,0 +1,13 @@
+site_name: architecture_suite Docs
+nav:
+  - Home: index.md
+  - Architecture: architecture/summary.md
+  - API Catalog: api/index.md
+  - Operations: operations/index.md
+  - Performance: performance/index.md
+  - Security: security/index.md
+  - Deployment: deployment/index.md
+  - Developer: developer/onboarding.md
+  - Training: training/intro_architecture_suite.md
+  - Glossary: glossary.md
+  - FAQ: faq.md

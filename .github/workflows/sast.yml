@@ -1,0 +1,22 @@
+name: SAST
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  sast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python SAST
+        run: |
+          pip install bandit flake8 flake8-bandit
+          bandit -r services/ -ll
+          flake8 --select=SEC services/
+      - name: JS SAST
+        run: |
+          npm install eslint eslint-plugin-security
+          npx eslint --ext .js,.jsx,.ts,.tsx ui/ --plugin security
+      - name: Fail on high/critical findings
+        run: exit 1 # (replace with real check)

@@ -1,0 +1,22 @@
+name: Dependency Scan
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  dep-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python dependencies
+        run: |
+          pip install safety
+          safety check -r services/*/requirements.txt
+      - name: Node dependencies
+        run: |
+          npm install -g snyk
+          snyk test ui/
+      - name: Trivy container scan
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image myapp:latest

@@ -1,0 +1,200 @@
+version: '3.8'
+
+services:
+  gateway_service:
+    build: ./services/gateway_service/app
+    container_name: gateway_service
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_URL=postgresql://gateway:password@db/gateway
+      - JWT_SECRET=supersecret
+      - TENANT_CONTEXT=multi
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - reqarchitect_net
+    depends_on:
+      - auth_service
+      - ai_modeling_service
+      - usage_service
+      - onboarding_state_service
+      - billing_service
+      - invoice_service
+      - event_bus
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: always
+
+  auth_service:
+    build: ./services/auth_service/app
+    container_name: auth_service
+    ports:
+      - "8001:8001"
+    environment:
+      - DB_URL=postgresql://auth:password@db/auth
+      - JWT_SECRET=supersecret
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - reqarchitect_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: always
+
+  ai_modeling_service:
+    build: ./services/ai_modeling_service/app
+    container_name: ai_modeling_service
+    ports:
+      - "8002:8002"
+    environment:
+      - DB_URL=postgresql://ai:password@db/ai
+      - JWT_SECRET=supersecret
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - reqarchitect_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: always
+
+  usage_service:
+    build: ./services/usage_service/app
+    container_name: usage_service
+    environment:
+      - DB_URL=postgresql://usage:password@db/usage
+      - JWT_SECRET=supersecret
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - reqarchitect_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: always
+
+  onboarding_state_service:
+    build: ./services/onboarding_state_service/app
+    container_name: onboarding_state_service
+    environment:
+      - DB_URL=postgresql://onboarding:password@db/onboarding
+      - JWT_SECRET=supersecret
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - reqarchitect_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: always
+
+  audit_log_service:
+    build: ./services/audit_log_service/app
+    container_name: audit_log_service
+    environment:
+      - DB_URL=postgresql://audit:password@db/audit
+      - JWT_SECRET=supersecret
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - reqarchitect_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: always
+
+  event_bus:
+    image: redis:7
+    container_name: event_bus
+    ports:
+      - "6379:6379"
+    networks:
+      - reqarchitect_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: always
+
+  notification_service:
+    build: ./services/notification_service/app
+    container_name: notification_service
+    environment:
+      - DB_URL=postgresql://notification:password@db/notification
+      - JWT_SECRET=supersecret
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - reqarchitect_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: always
+
+  billing_service:
+    build: ./services/billing_service/app
+    container_name: billing_service
+    ports:
+      - "8010:8010"
+    environment:
+      - DB_URL=postgresql://billing:password@db/billing
+      - JWT_SECRET=supersecret
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - reqarchitect_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8010/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: always
+
+  invoice_service:
+    build: ./services/invoice_service/app
+    container_name: invoice_service
+    ports:
+      - "8011:8011"
+    environment:
+      - DB_URL=postgresql://invoice:password@db/invoice
+      - JWT_SECRET=supersecret
+    volumes:
+      - ./logs:/app/logs
+      - ./invoices:/app/invoices
+    networks:
+      - reqarchitect_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8011/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: always
+
+default:
+  service: gateway_service
+
+networks:
+  reqarchitect_net:
+    driver: bridge
+
+volumes:
+  logs:
+  invoices:

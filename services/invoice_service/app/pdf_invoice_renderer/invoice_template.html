@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Invoice {{ invoice_id }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; color: #222; margin: 0; padding: 0; }
+        .header { background: {{ brand_color|default('#2d3e50') }}; color: #fff; padding: 20px; }
+        .logo { height: 48px; }
+        .content { padding: 24px; }
+        .invoice-info { margin-bottom: 24px; }
+        .line-items { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+        .line-items th, .line-items td { border: 1px solid #ddd; padding: 8px; }
+        .line-items th { background: #f4f4f4; }
+        .total { font-size: 1.2em; font-weight: bold; text-align: right; }
+        .footer { color: #888; font-size: 0.9em; text-align: center; margin-top: 32px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        {% if logo_url %}<img src="{{ logo_url }}" class="logo" alt="Tenant Logo">{% endif %}
+        <h1>Invoice</h1>
+    </div>
+    <div class="content">
+        <div class="invoice-info">
+            <strong>Invoice ID:</strong> {{ invoice_id }}<br>
+            <strong>Tenant:</strong> {{ tenant_name }}<br>
+            <strong>Billing Period:</strong> {{ billing_period_start }} - {{ billing_period_end }}<br>
+            <strong>Status:</strong> {{ status }}<br>
+            <strong>Issued:</strong> {{ timestamp }}<br>
+            <strong>Billing Email:</strong> {{ billing_email }}<br>
+        </div>
+        <table class="line-items">
+            <thead>
+                <tr><th>Description</th><th>Amount</th></tr>
+            </thead>
+            <tbody>
+                {% for item in line_items %}
+                <tr>
+                    <td>{{ item.description }}</td>
+                    <td>${{ '%.2f'|format(item.amount) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="total">Total: ${{ '%.2f'|format(total_amount) }}</div>
+    </div>
+    <div class="footer">
+        &copy; {{ timestamp[:4] }} ReqArchitect. All rights reserved.
+    </div>
+</body>
+</html>

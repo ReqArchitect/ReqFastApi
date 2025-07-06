@@ -1,0 +1,35 @@
+
+# HashiCorp Vault Integration Example
+# Add this to your deployment configuration
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secrets
+type: Opaque
+data:
+  JWT_SECRET: <base64-encoded-jwt-secret>
+  SECRET_KEY: <base64-encoded-secret-key>
+  DATABASE_PASSWORD: <base64-encoded-db-password>
+  REDIS_PASSWORD: <base64-encoded-redis-password>
+  STRIPE_SECRET_KEY: <base64-encoded-stripe-key>
+  OPENAI_API_KEY: <base64-encoded-openai-key>
+  SMTP_PASSWORD: <base64-encoded-smtp-password>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+spec:
+  template:
+    spec:
+      containers:
+      - name: app
+        envFrom:
+        - secretRef:
+            name: app-secrets
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://user:$(DATABASE_PASSWORD)@db:5432/app"
+        - name: REDIS_URL
+          value: "redis://:$(REDIS_PASSWORD)@redis:6379/0"

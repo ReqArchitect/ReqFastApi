@@ -1,0 +1,33 @@
+# Notification Service Database Migrations
+
+This directory contains database migrations for the notification_service.
+
+## Usage
+
+1. Generate a new migration:
+   ```bash
+   cd services/notification_service
+   alembic revision --autogenerate -m "Description of changes"
+   ```
+
+2. Apply migrations:
+   ```bash
+   alembic upgrade head
+   ```
+
+3. Check current migration state:
+   ```bash
+   alembic current
+   ```
+
+4. Rollback to previous version:
+   ```bash
+   alembic downgrade -1
+   ```
+
+## Environment Setup
+
+Ensure DATABASE_URL is set in your environment:
+```bash
+export DATABASE_URL="postgresql://user:password@localhost:5432/notification_service_db"
+```

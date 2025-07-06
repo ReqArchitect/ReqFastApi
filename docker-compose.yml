@@ -188,9 +188,6 @@ services:
       retries: 5
     restart: always
 
-default:
-  service: gateway_service
-
 networks:
   reqarchitect_net:
     driver: bridge

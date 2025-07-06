@@ -6,6 +6,9 @@ import httpx
 from app.routing import resolve_service
 from app.middleware import AuthMiddleware, RateLimitMiddleware, LoggingMiddleware
 import asyncio
+from datetime import datetime
+import os
+import time
 
 middlewares = [
     Middleware(AuthMiddleware),
@@ -17,7 +20,30 @@ app = FastAPI(middleware=middlewares)
 
 @app.get("/health")
 def health():
-    return {"status": "gateway ok"}
+    return {
+        "status": "healthy",
+        "service": "gateway_service",
+        "timestamp": datetime.utcnow().isoformat(),
+        "uptime": get_uptime(),
+        "version": "1.0.0",
+        "environment": os.getenv("ENVIRONMENT", "development")
+    }
+
+@app.get("/metrics")
+def get_metrics():
+    """Prometheus-style metrics endpoint"""
+    return {
+        "gateway_uptime_seconds": get_uptime(),
+        "gateway_requests_total": getattr(app.state, 'request_count', 0),
+        "gateway_errors_total": getattr(app.state, 'error_count', 0),
+        "gateway_active_connections": getattr(app.state, 'active_connections', 0)
+    }
+
+def get_uptime() -> float:
+    """Get service uptime in seconds"""
+    if not hasattr(app.state, 'start_time'):
+        app.state.start_time = time.time()
+    return time.time() - app.state.start_time
 
 @app.post("/proxy/{service}/{path:path}")
 async def proxy(service: str, path: str, request: Request):

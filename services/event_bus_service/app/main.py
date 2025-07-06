@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
-from . import models, schemas
-from .database import SessionLocal, engine
+from app import models, schemas
+from app.database import SessionLocal, engine
 from datetime import datetime
 from typing import List
 import uuid
@@ -39,6 +39,10 @@ def emit_audit_event(event_type, details=None):
     # Integrate with audit_log_service
 
 # --- Endpoints ---
+@app.get("/health")
+def health_check():
+    return {"status": "healthy", "service": "event_bus"}
+
 @app.post("/event_bus/publish")
 def publish_event(event: schemas.Event, request: Request, db: Session = Depends(get_db)):
     source_service = validate_source(request)

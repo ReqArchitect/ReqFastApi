@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
-from . import models, schemas
-from .database import SessionLocal, engine
+from app import models, schemas
+from app.database import SessionLocal, engine
 from datetime import datetime
 from typing import List
 import uuid
@@ -27,6 +27,10 @@ def get_auth_context(request: Request):
     return {"user_id": user_id, "tenant_id": tenant_id}
 
 # --- Endpoints ---
+@app.get("/health")
+def health_check():
+    return {"status": "healthy", "service": "feedback"}
+
 @app.post("/feedback/submit", response_model=schemas.Feedback)
 def submit_feedback(fb: schemas.Feedback, db: Session = Depends(get_db), ctx: dict = Depends(get_auth_context)):
     if not (1 <= fb.rating <= 5):

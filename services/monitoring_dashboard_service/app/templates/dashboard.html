@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReqArchitect Service Monitor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-left: 4px solid #3498db;
+        }
+
+        .summary-card.healthy {
+            border-left-color: #27ae60;
+        }
+
+        .summary-card.unhealthy {
+            border-left-color: #e74c3c;
+        }
+
+        .summary-card h3 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .summary-card p {
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .service-card.healthy {
+            border-color: #27ae60;
+        }
+
+        .service-card.unhealthy {
+            border-color: #e74c3c;
+        }
+
+        .service-card.unknown {
+            border-color: #f39c12;
+        }
+
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .service-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-badge.healthy {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+
+        .status-badge.unhealthy {
+            background: #fadbd8;
+            color: #e74c3c;
+        }
+
+        .status-badge.unknown {
+            background: #fdeaa7;
+            color: #f39c12;
+        }
+
+        .service-details {
+            margin-top: 15px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 5px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .detail-label {
+            font-weight: 500;
+            color: #7f8c8d;
+        }
+
+        .detail-value {
+            color: #2c3e50;
+            font-family: 'Courier New', monospace;
+        }
+
+        .error-message {
+            background: #fadbd8;
+            color: #c0392b;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .controls {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-top: 1px solid #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .refresh-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: #2980b9;
+        }
+
+        .last-updated {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #7f8c8d;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .summary {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 ReqArchitect Service Monitor</h1>
+            <p>Real-time health monitoring and status dashboard</p>
+        </div>
+
+        <div class="summary">
+            <div class="summary-card">
+                <h3>{{ summary.total }}</h3>
+                <p>Total Services</p>
+            </div>
+            <div class="summary-card healthy">
+                <h3>{{ summary.healthy }}</h3>
+                <p>Healthy Services</p>
+            </div>
+            <div class="summary-card unhealthy">
+                <h3>{{ summary.unhealthy }}</h3>
+                <p>Unhealthy Services</p>
+            </div>
+        </div>
+
+        <div class="services-grid" id="services-grid">
+            {% for service_name, service_data in services.items() %}
+            <div class="service-card {{ service_data.status }}">
+                <div class="service-header">
+                    <div class="service-name">{{ service_name.replace('_', ' ').title() }}</div>
+                    <div class="status-badge {{ service_data.status }}">{{ service_data.status }}</div>
+                </div>
+                
+                <div class="service-details">
+                    <div class="detail-row">
+                        <span class="detail-label">URL:</span>
+                        <span class="detail-value">{{ service_data.url }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Response Time:</span>
+                        <span class="detail-value">{{ service_data.response_time }}ms</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Last Check:</span>
+                        <span class="detail-value">{{ service_data.last_check.split('T')[1].split('.')[0] }}</span>
+                    </div>
+                    {% if service_data.error %}
+                    <div class="error-message">
+                        <strong>Error:</strong> {{ service_data.error }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="controls">
+            <button class="refresh-btn" onclick="refreshStatus()">🔄 Refresh Status</button>
+            <div class="last-updated">
+                Last updated: <span id="last-updated">{{ timestamp.split('T')[1].split('.')[0] }}</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function refreshStatus() {
+            const grid = document.getElementById('services-grid');
+            const lastUpdated = document.getElementById('last-updated');
+            
+            // Show loading state
+            grid.innerHTML = '<div class="loading"><div class="spinner"></div><p>Checking service status...</p></div>';
+            
+            // Fetch updated status
+            fetch('/api/check', { method: 'POST' })
+                .then(() => {
+                    // Wait a moment for the check to complete
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                })
+                .catch(error => {
+                    console.error('Error refreshing status:', error);
+                    grid.innerHTML = '<div class="loading"><p>Error refreshing status. Please try again.</p></div>';
+                });
+        }
+
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            fetch('/api/status')
+                .then(response => response.json())
+                .then(data => {
+                    // Update last updated time
+                    const lastUpdated = document.getElementById('last-updated');
+                    const timestamp = new Date(data.timestamp).toLocaleTimeString();
+                    lastUpdated.textContent = timestamp;
+                    
+                    // Update service cards
+                    updateServiceCards(data.services);
+                })
+                .catch(error => {
+                    console.error('Error auto-refreshing:', error);
+                });
+        }, 30000);
+
+        function updateServiceCards(services) {
+            const grid = document.getElementById('services-grid');
+            
+            Object.entries(services).forEach(([serviceName, serviceData]) => {
+                const card = grid.querySelector(`[data-service="${serviceName}"]`);
+                if (card) {
+                    // Update status badge
+                    const badge = card.querySelector('.status-badge');
+                    badge.textContent = serviceData.status;
+                    badge.className = `status-badge ${serviceData.status}`;
+                    
+                    // Update response time
+                    const responseTime = card.querySelector('.detail-value');
+                    if (responseTime) {
+                        responseTime.textContent = `${serviceData.response_time}ms`;
+                    }
+                    
+                    // Update card class
+                    card.className = `service-card ${serviceData.status}`;
+                }
+            });
+        }
+
+        // Add data-service attributes to cards for easier updating
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.service-card');
+            cards.forEach(card => {
+                const serviceName = card.querySelector('.service-name').textContent.toLowerCase().replace(/\s+/g, '_');
+                card.setAttribute('data-service', serviceName);
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,9 +1,13 @@
+
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app import models, schemas, database
 from typing import List
 from datetime import datetime
 import logging
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 app = FastAPI()
 

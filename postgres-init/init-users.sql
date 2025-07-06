@@ -1,0 +1,1 @@
+-- All user and privilege creation is now handled by init-microservices.sql

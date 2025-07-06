@@ -1,3 +1,4 @@
+
 from fastapi import FastAPI, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from app import models, schemas
@@ -5,6 +6,11 @@ from app.database import SessionLocal, engine
 from datetime import datetime
 from typing import List
 import uuid
+import time
+import os
+
+from dotenv import load_dotenv
+load_dotenv()
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -30,6 +36,44 @@ def validate_tenant(request: Request, tenant_id: str):
         raise HTTPException(status_code=403, detail="Tenant mismatch")
 
 # --- Endpoints ---
+@app.get("/health")
+def health_check():
+    return {
+        "status": "healthy",
+        "service": "billing_service",
+        "timestamp": datetime.utcnow().isoformat(),
+        "uptime": get_uptime(),
+        "version": "1.0.0",
+        "environment": os.getenv("ENVIRONMENT", "development"),
+        "database_connected": check_database_connection()
+    }
+
+@app.get("/metrics")
+def get_metrics():
+    """Prometheus-style metrics endpoint"""
+    return {
+        "billing_uptime_seconds": get_uptime(),
+        "billing_requests_total": getattr(app.state, 'request_count', 0),
+        "billing_upgrades_total": getattr(app.state, 'upgrades_total', 0),
+        "billing_alerts_triggered": getattr(app.state, 'alerts_triggered', 0)
+    }
+
+def get_uptime() -> float:
+    """Get service uptime in seconds"""
+    if not hasattr(app.state, 'start_time'):
+        app.state.start_time = time.time()
+    return time.time() - app.state.start_time
+
+def check_database_connection() -> bool:
+    """Check if database connection is working"""
+    try:
+        db = SessionLocal()
+        db.execute("SELECT 1")
+        db.close()
+        return True
+    except Exception:
+        return False
+
 @app.get("/billing/tenant/{tenant_id}", response_model=schemas.TenantBillingProfile)
 def get_billing_profile(tenant_id: str, db: Session = Depends(get_db), request: Request = None):
     require_admin(request)

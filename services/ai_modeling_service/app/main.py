@@ -1,3 +1,4 @@
+
 from fastapi import FastAPI, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from app import models, schemas
@@ -5,6 +6,11 @@ from app.database import SessionLocal, engine
 from typing import List
 from datetime import datetime
 import json
+import time
+import os
+
+from dotenv import load_dotenv
+load_dotenv()
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -44,6 +50,44 @@ def call_llm(prompt):
     if "initiative" in prompt.lower():
         return {"layer": "Business", "elements": [{"type": "Initiative", "name": "DigitalOps2025"}]}
     return {"layer": "Business", "elements": [{"type": "Capability", "name": "DefaultCapability"}]}
+
+@app.get("/health")
+def health_check():
+    return {
+        "status": "healthy",
+        "service": "ai_modeling_service",
+        "timestamp": datetime.utcnow().isoformat(),
+        "uptime": get_uptime(),
+        "version": "1.0.0",
+        "environment": os.getenv("ENVIRONMENT", "development"),
+        "database_connected": check_database_connection()
+    }
+
+@app.get("/metrics")
+def get_metrics():
+    """Prometheus-style metrics endpoint"""
+    return {
+        "ai_modeling_uptime_seconds": get_uptime(),
+        "ai_modeling_requests_total": getattr(app.state, 'request_count', 0),
+        "ai_modeling_generations_total": getattr(app.state, 'generation_count', 0),
+        "ai_modeling_feedback_total": getattr(app.state, 'feedback_count', 0)
+    }
+
+def get_uptime() -> float:
+    """Get service uptime in seconds"""
+    if not hasattr(app.state, 'start_time'):
+        app.state.start_time = time.time()
+    return time.time() - app.state.start_time
+
+def check_database_connection() -> bool:
+    """Check if database connection is working"""
+    try:
+        db = SessionLocal()
+        db.execute("SELECT 1")
+        db.close()
+        return True
+    except Exception:
+        return False
 
 @app.post("/ai_modeling/generate", response_model=schemas.ModelingOutput)
 def generate_modeling(input: schemas.ModelingInput, db: Session = Depends(get_db), ctx: dict = Depends(get_auth_context)):

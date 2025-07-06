@@ -1,9 +1,15 @@
+
 from fastapi import FastAPI, HTTPException, Depends, status, Response
 from app import models, schemas
 from app.database import get_db
 from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime
+import time
+import os
+
+from dotenv import load_dotenv
+load_dotenv()
 
 app = FastAPI()
 
@@ -15,6 +21,44 @@ def get_current_admin_user():
 def validate_tenant_context(tenant_id: str):
     # TODO: Implement tenant scoping
     pass
+
+@app.get("/health")
+def health_check():
+    return {
+        "status": "healthy",
+        "service": "invoice_service",
+        "timestamp": datetime.utcnow().isoformat(),
+        "uptime": get_uptime(),
+        "version": "1.0.0",
+        "environment": os.getenv("ENVIRONMENT", "development"),
+        "database_connected": check_database_connection()
+    }
+
+@app.get("/metrics")
+def get_metrics():
+    """Prometheus-style metrics endpoint"""
+    return {
+        "invoice_uptime_seconds": get_uptime(),
+        "invoice_requests_total": getattr(app.state, 'request_count', 0),
+        "invoice_generated_total": getattr(app.state, 'invoices_generated', 0),
+        "invoice_paid_total": getattr(app.state, 'invoices_paid', 0)
+    }
+
+def get_uptime() -> float:
+    """Get service uptime in seconds"""
+    if not hasattr(app.state, 'start_time'):
+        app.state.start_time = time.time()
+    return time.time() - app.state.start_time
+
+def check_database_connection() -> bool:
+    """Check if database connection is working"""
+    try:
+        db = next(get_db())
+        db.execute("SELECT 1")
+        db.close()
+        return True
+    except Exception:
+        return False
 
 @app.post("/invoices/generate/{tenant_id}", response_model=schemas.Invoice)
 def generate_invoice(tenant_id: str, db: Session = Depends(get_db), user=Depends(get_current_admin_user)):

@@ -29,6 +29,10 @@ def emit_audit_event(tenant_id, user_id, step, value):
     # Integrate with audit_log_service here
     print(f"AUDIT: {tenant_id=} {user_id=} {step=} {value=}")
 
+@app.get("/health")
+def health_check():
+    return {"status": "healthy", "service": "onboarding_state"}
+
 @app.get("/onboarding/state/{user_id}", response_model=schemas.OnboardingStatus)
 def get_onboarding_state(user_id: str, db: Session = Depends(get_db), ctx: dict = Depends(get_auth_context)):
     record = db.query(models.OnboardingStatus).filter_by(user_id=user_id, tenant_id=ctx["tenant_id"]).first()

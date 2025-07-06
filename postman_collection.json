@@ -1,0 +1,760 @@
+{
+  "info": {
+    "name": "FastAPI Microservices - Integration Tests",
+    "description": "Complete Postman collection for testing end-to-end flows across all microservices",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "auth_service_url",
+      "value": "http://localhost:8001",
+      "type": "string"
+    },
+    {
+      "key": "ai_modeling_url",
+      "value": "http://localhost:8002",
+      "type": "string"
+    },
+    {
+      "key": "invoice_url",
+      "value": "http://localhost:8011",
+      "type": "string"
+    },
+    {
+      "key": "billing_url",
+      "value": "http://localhost:8010",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "tenant_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_email",
+      "value": "test-user@example.com",
+      "type": "string"
+    },
+    {
+      "key": "user_password",
+      "value": "TestPassword123!",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "🔐 Authentication",
+      "item": [
+        {
+          "name": "User Signup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{user_email}}\",\n  \"password\": \"{{user_password}}\",\n  \"tenant_id\": \"{{tenant_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"role\": \"Admin\"\n}"
+            },
+            "url": {
+              "raw": "{{auth_service_url}}/auth/signup",
+              "host": ["{{auth_service_url}}"],
+              "path": ["auth", "signup"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"TestPassword123!\",\n  \"tenant_id\": \"tenant-123\",\n  \"user_id\": \"user-123\",\n  \"role\": \"Admin\"\n}"
+                },
+                "url": {
+                  "raw": "http://localhost:8001/auth/signup",
+                  "host": ["localhost"],
+                  "port": "8001",
+                  "path": ["auth", "signup"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"message\": \"User created successfully\",\n  \"user_id\": \"user-123\",\n  \"email\": \"test@example.com\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "User Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('jwt_token', response.token);",
+                  "    pm.collectionVariables.set('user_id', response.user_id);",
+                  "    pm.collectionVariables.set('tenant_id', response.tenant_id);",
+                  "    console.log('JWT Token set:', response.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{user_email}}\",\n  \"password\": \"{{user_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{auth_service_url}}/auth/login",
+              "host": ["{{auth_service_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"TestPassword123!\"\n}"
+                },
+                "url": {
+                  "raw": "http://localhost:8001/auth/login",
+                  "host": ["localhost"],
+                  "port": "8001",
+                  "path": ["auth", "login"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"user_id\": \"user-123\",\n  \"tenant_id\": \"tenant-123\",\n  \"email\": \"test@example.com\",\n  \"role\": \"Admin\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{auth_service_url}}/auth/me",
+              "host": ["{{auth_service_url}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🤖 AI Modeling Service",
+      "item": [
+        {
+          "name": "Generate AI Model",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              },
+              {
+                "key": "X-Tenant-ID",
+                "value": "{{tenant_id}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenant_id\": \"{{tenant_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"input_type\": \"goal\",\n  \"input_text\": \"Optimize supply chain efficiency and reduce operational costs by 20%\"\n}"
+            },
+            "url": {
+              "raw": "{{ai_modeling_url}}/ai_modeling/generate",
+              "host": ["{{ai_modeling_url}}"],
+              "path": ["ai_modeling", "generate"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tenant_id\": \"tenant-123\",\n  \"user_id\": \"user-123\",\n  \"input_type\": \"goal\",\n  \"input_text\": \"Optimize supply chain efficiency\"\n}"
+                },
+                "url": {
+                  "raw": "http://localhost:8002/ai_modeling/generate",
+                  "host": ["localhost"],
+                  "port": "8002",
+                  "path": ["ai_modeling", "generate"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"model_id\": \"model-123\",\n  \"layer\": \"Business Process\",\n  \"status\": \"completed\",\n  \"generated_at\": \"2024-01-01T12:00:00Z\",\n  \"output\": {\n    \"processes\": [\"Supply Chain Optimization\", \"Cost Reduction\"],\n    \"metrics\": [\"20% cost reduction\", \"30% efficiency improvement\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Model Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{ai_modeling_url}}/ai_modeling/status/model-123",
+              "host": ["{{ai_modeling_url}}"],
+              "path": ["ai_modeling", "status", "model-123"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📊 Usage Service",
+      "item": [
+        {
+          "name": "Get Usage Metrics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              },
+              {
+                "key": "X-Tenant-ID",
+                "value": "{{tenant_id}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8000/usage/tenant/{{tenant_id}}",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["usage", "tenant", "{{tenant_id}}"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8000/usage/tenant/tenant-123",
+                  "host": ["localhost"],
+                  "port": "8000",
+                  "path": ["usage", "tenant", "tenant-123"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"tenant_id\": \"tenant-123\",\n  \"api_calls\": 15,\n  \"ai_generations\": 3,\n  \"storage_used_mb\": 45.2,\n  \"last_updated\": \"2024-01-01T12:00:00Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Log API Usage",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenant_id\": \"{{tenant_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"service\": \"ai_modeling\",\n  \"endpoint\": \"/ai_modeling/generate\",\n  \"timestamp\": \"2024-01-01T12:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/usage/log",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["usage", "log"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🧾 Invoice Service",
+      "item": [
+        {
+          "name": "Generate Invoice",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              },
+              {
+                "key": "X-Tenant-ID",
+                "value": "{{tenant_id}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenant_id\": \"{{tenant_id}}\",\n  \"amount\": 99.99,\n  \"currency\": \"USD\",\n  \"description\": \"AI Modeling Service - Supply Chain Optimization\",\n  \"line_items\": [\n    {\n      \"description\": \"AI Model Generation\",\n      \"quantity\": 1,\n      \"unit_price\": 99.99,\n      \"total\": 99.99\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{invoice_url}}/invoices/generate/{{tenant_id}}",
+              "host": ["{{invoice_url}}"],
+              "path": ["invoices", "generate", "{{tenant_id}}"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tenant_id\": \"tenant-123\",\n  \"amount\": 99.99,\n  \"currency\": \"USD\",\n  \"description\": \"AI Modeling Service\"\n}"
+                },
+                "url": {
+                  "raw": "http://localhost:8011/invoices/generate/tenant-123",
+                  "host": ["localhost"],
+                  "port": "8011",
+                  "path": ["invoices", "generate", "tenant-123"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"invoice_id\": \"inv-123\",\n  \"tenant_id\": \"tenant-123\",\n  \"amount\": 99.99,\n  \"currency\": \"USD\",\n  \"status\": \"generated\",\n  \"generated_at\": \"2024-01-01T12:00:00Z\",\n  \"pdf_url\": \"/invoices/inv-123.pdf\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Invoice",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{invoice_url}}/invoices/inv-123",
+              "host": ["{{invoice_url}}"],
+              "path": ["invoices", "inv-123"]
+            }
+          }
+        },
+        {
+          "name": "Download Invoice PDF",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{invoice_url}}/invoices/inv-123/pdf",
+              "host": ["{{invoice_url}}"],
+              "path": ["invoices", "inv-123", "pdf"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📧 Notification Service",
+      "item": [
+        {
+          "name": "Send Notification",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              },
+              {
+                "key": "X-Tenant-ID",
+                "value": "{{tenant_id}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{user_id}}\",\n  \"tenant_id\": \"{{tenant_id}}\",\n  \"channel\": \"email\",\n  \"message\": \"Your AI modeling request has been completed successfully!\",\n  \"event_type\": \"ai_modeling_complete\",\n  \"metadata\": {\n    \"model_id\": \"model-123\",\n    \"completion_time\": \"2024-01-01T12:00:00Z\"\n  }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/notifications/send",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["notifications", "send"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"user_id\": \"user-123\",\n  \"tenant_id\": \"tenant-123\",\n  \"channel\": \"email\",\n  \"message\": \"Your AI modeling request has been completed!\"\n}"
+                },
+                "url": {
+                  "raw": "http://localhost:8000/notifications/send",
+                  "host": ["localhost"],
+                  "port": "8000",
+                  "path": ["notifications", "send"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"notification_id\": \"notif-123\",\n  \"status\": \"sent\",\n  \"sent_at\": \"2024-01-01T12:00:00Z\",\n  \"channel\": \"email\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Notification Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8000/notifications/notif-123",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["notifications", "notif-123"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💰 Billing Service",
+      "item": [
+        {
+          "name": "Get Billing Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              },
+              {
+                "key": "X-Tenant-ID",
+                "value": "{{tenant_id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{billing_url}}/billing/tenant/{{tenant_id}}",
+              "host": ["{{billing_url}}"],
+              "path": ["billing", "tenant", "{{tenant_id}}"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8010/billing/tenant/tenant-123",
+                  "host": ["localhost"],
+                  "port": "8010",
+                  "path": ["billing", "tenant", "tenant-123"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"tenant_id\": \"tenant-123\",\n  \"plan\": \"premium\",\n  \"monthly_limit\": 1000,\n  \"current_usage\": 15,\n  \"billing_cycle\": \"monthly\",\n  \"next_billing_date\": \"2024-02-01T00:00:00Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Billing Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenant_id\": \"{{tenant_id}}\",\n  \"plan\": \"premium\",\n  \"monthly_limit\": 1000,\n  \"billing_cycle\": \"monthly\",\n  \"payment_method\": {\n    \"type\": \"credit_card\",\n    \"last4\": \"1234\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{billing_url}}/billing/profile",
+              "host": ["{{billing_url}}"],
+              "path": ["billing", "profile"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🌐 Gateway Service",
+      "item": [
+        {
+          "name": "Gateway Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          }
+        },
+        {
+          "name": "Gateway Proxy - Auth Service",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/proxy/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["proxy", "auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "Gateway Proxy - AI Modeling",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenant_id\": \"{{tenant_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"input_type\": \"goal\",\n  \"input_text\": \"Test via gateway\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/proxy/ai_modeling/generate",
+              "host": ["{{base_url}}"],
+              "path": ["proxy", "ai_modeling", "generate"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔄 End-to-End Flow",
+      "item": [
+        {
+          "name": "Complete User Journey",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// This is a test script that would run the complete flow",
+                  "console.log('Starting complete user journey test...');",
+                  "",
+                  "// Step 1: Login and get JWT",
+                  "pm.sendRequest({",
+                  "    url: pm.collectionVariables.get('auth_service_url') + '/auth/login',",
+                  "    method: 'POST',",
+                  "    header: {",
+                  "        'Content-Type': 'application/json'",
+                  "    },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({",
+                  "            email: pm.collectionVariables.get('user_email'),",
+                  "            password: pm.collectionVariables.get('user_password')",
+                  "        })",
+                  "    }",
+                  "}, function (err, response) {",
+                  "    if (response.code === 200) {",
+                  "        const loginData = response.json();",
+                  "        pm.collectionVariables.set('jwt_token', loginData.token);",
+                  "        console.log('Login successful, JWT obtained');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+} 

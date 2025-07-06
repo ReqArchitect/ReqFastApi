@@ -1,0 +1,226 @@
+name: Docker Build and Test Microservices
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  PYTHON_VERSION: '3.11'
+  DOCKER_COMPOSE_VERSION: '2.20.0'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Cache Docker layers
+      uses: actions/cache@v3
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests docker-compose
+
+    - name: Validate Docker Compose
+      run: |
+        echo "🔍 Validating docker-compose.yml syntax..."
+        docker-compose config
+
+    - name: Build all microservices
+      run: |
+        echo "🔨 Building all microservices..."
+        docker-compose build \
+          gateway_service \
+          notification_service \
+          ai_modeling_service \
+          auth_service \
+          usage_service \
+          billing_service \
+          invoice_service \
+          analytics_service \
+          feedback_service \
+          event_bus_service \
+          onboarding_state_service \
+          audit_log_service
+
+    - name: Start services
+      run: |
+        echo "🚀 Starting services..."
+        docker-compose up -d db event_bus
+        
+        echo "⏳ Waiting for infrastructure services..."
+        sleep 30
+        
+        # Wait for database to be ready
+        timeout 60 bash -c 'until docker exec postgres_db pg_isready -U postgres; do sleep 2; done'
+        
+        # Wait for Redis to be ready
+        timeout 60 bash -c 'until docker exec event_bus redis-cli ping; do sleep 2; done'
+
+    - name: Start application services
+      run: |
+        echo "🚀 Starting application services..."
+        docker-compose up -d \
+          gateway_service \
+          auth_service \
+          ai_modeling_service \
+          billing_service \
+          invoice_service \
+          notification_service \
+          usage_service
+        
+        echo "⏳ Waiting for services to start..."
+        sleep 60
+
+    - name: Run structural tests
+      run: |
+        echo "🧪 Running structural tests..."
+        python test_microservices.py
+
+    - name: Test health endpoints
+      run: |
+        echo "🏥 Testing health endpoints..."
+        
+        # Define services with their ports
+        declare -A services=(
+          ["gateway_service"]="http://localhost:8080/health"
+          ["auth_service"]="http://localhost:8001/health"
+          ["ai_modeling_service"]="http://localhost:8002/health"
+          ["billing_service"]="http://localhost:8010/health"
+          ["invoice_service"]="http://localhost:8011/health"
+        )
+        
+        failed_services=()
+        
+        for service_name in "${!services[@]}"; do
+          echo "🔍 Checking $service_name..."
+          
+          # Retry logic for health checks
+          for i in {1..10}; do
+            if curl -f -s "${services[$service_name]}" > /dev/null 2>&1; then
+              echo "✅ $service_name is healthy"
+              break
+            else
+              echo "⏳ $service_name not ready yet (attempt $i/10)"
+              if [ $i -eq 10 ]; then
+                echo "❌ $service_name failed health check"
+                failed_services+=("$service_name")
+              fi
+              sleep 5
+            fi
+          done
+        done
+        
+        # Check internal services (they share port 8000, so we can't test individually)
+        echo "🔍 Checking internal services..."
+        if curl -f -s "http://localhost:8000/health" > /dev/null 2>&1; then
+          echo "✅ Internal services are responding"
+        else
+          echo "❌ Internal services failed health check"
+          failed_services+=("internal_services")
+        fi
+        
+        # Fail if any services failed
+        if [ ${#failed_services[@]} -ne 0 ]; then
+          echo "❌ The following services failed health checks:"
+          printf '   - %s\n' "${failed_services[@]}"
+          exit 1
+        fi
+
+    - name: Test service functionality
+      run: |
+        echo "🧪 Testing service functionality..."
+        
+        # Test gateway service
+        echo "🔍 Testing gateway service..."
+        gateway_response=$(curl -s http://localhost:8080/health)
+        if echo "$gateway_response" | grep -q "gateway ok"; then
+          echo "✅ Gateway service responding correctly"
+        else
+          echo "❌ Gateway service not responding correctly"
+          exit 1
+        fi
+        
+        # Test auth service
+        echo "🔍 Testing auth service..."
+        auth_response=$(curl -s http://localhost:8001/health)
+        if echo "$auth_response" | grep -q "auth"; then
+          echo "✅ Auth service responding correctly"
+        else
+          echo "❌ Auth service not responding correctly"
+          exit 1
+        fi
+
+    - name: Check container logs
+      if: failure()
+      run: |
+        echo "📋 Container logs (on failure):"
+        docker-compose logs --tail=50
+
+    - name: Cleanup
+      if: always()
+      run: |
+        echo "🧹 Cleaning up containers..."
+        docker-compose down -v
+
+  lint-and-validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install linting tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 ruff pre-commit
+
+    - name: Install pre-commit hooks
+      run: |
+        pre-commit install
+
+    - name: Run pre-commit on all files
+      run: |
+        pre-commit run --all-files
+
+    - name: Lint Python files
+      run: |
+        echo "🔍 Linting Python files..."
+        flake8 services/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 services/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+    - name: Check Dockerfile syntax
+      run: |
+        echo "🔍 Checking Dockerfile syntax..."
+        for dockerfile in $(find services/ -name "Dockerfile"); do
+          echo "Checking $dockerfile..."
+          docker run --rm -i hadolint/hadolint < "$dockerfile"
+        done
+
+    - name: Validate docker-compose syntax
+      run: |
+        echo "🔍 Validating docker-compose.yml..."
+        docker-compose config --quiet 

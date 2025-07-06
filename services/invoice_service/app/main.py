@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Depends, status, Response
-from . import models, schemas
-from .database import get_db
+from app import models, schemas
+from app.database import get_db
 from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime

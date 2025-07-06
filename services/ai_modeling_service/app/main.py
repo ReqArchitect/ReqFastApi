@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
-from . import models, schemas
-from .database import SessionLocal, engine
+from app import models, schemas
+from app.database import SessionLocal, engine
 from typing import List
 from datetime import datetime
 import json

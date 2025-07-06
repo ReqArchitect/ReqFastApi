@@ -3,8 +3,8 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from starlette.middleware import Middleware
 from starlette.middleware.base import BaseHTTPMiddleware
 import httpx
-from .routing import resolve_service
-from .middleware import AuthMiddleware, RateLimitMiddleware, LoggingMiddleware
+from app.routing import resolve_service
+from app.middleware import AuthMiddleware, RateLimitMiddleware, LoggingMiddleware
 import asyncio
 
 middlewares = [

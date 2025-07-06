@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "docker compose build and up",
+			"command": "docker compose build && docker compose up --abort-on-container-exit",
+			"group": "build",
+			"isBackground": false
+		}
+	]
+}

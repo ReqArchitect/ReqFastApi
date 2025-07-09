@@ -1,0 +1,594 @@
+{
+  "timestamp": "2025-07-09T12:28:15.572232",
+  "test_data": {
+    "tenant_id": "test-tenant-123",
+    "user_id": "test-user-456",
+    "email": "test@example.com",
+    "password": "testpass123",
+    "role": "Admin"
+  },
+  "results": [
+    {
+      "service": "gateway_service",
+      "endpoint": "/health",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 22.2,
+      "success": true,
+      "response_body": {
+        "status": "healthy",
+        "service": "gateway_service",
+        "timestamp": "2025-07-09T11:28:15.594005",
+        "uptime": 53335.08849310875,
+        "version": "1.0.0",
+        "environment": "development"
+      },
+      "error": null
+    },
+    {
+      "service": "gateway_service",
+      "endpoint": "/metrics",
+      "method": "GET",
+      "status_code": 500,
+      "response_time": 13.31,
+      "success": false,
+      "response_body": "Internal Server Error",
+      "error": null
+    },
+    {
+      "service": "gateway_service",
+      "endpoint": "/api/v1/health",
+      "method": "GET",
+      "status_code": 500,
+      "response_time": 11.56,
+      "success": false,
+      "response_body": "Internal Server Error",
+      "error": null
+    },
+    {
+      "service": "auth_service",
+      "endpoint": "/health",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 14.39,
+      "success": true,
+      "response_body": {
+        "status": "healthy",
+        "service": "auth_service",
+        "timestamp": "2025-07-09T11:28:15.634976",
+        "uptime": 139061.13599729538,
+        "version": "1.0.0",
+        "environment": "development",
+        "database_connected": false
+      },
+      "error": null
+    },
+    {
+      "service": "auth_service",
+      "endpoint": "/metrics",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 16.04,
+      "success": true,
+      "response_body": {
+        "auth_uptime_seconds": 139061.1524310112,
+        "auth_logins_total": 0,
+        "auth_logouts_total": 0,
+        "auth_tokens_issued": 0,
+        "auth_tokens_revoked": 0
+      },
+      "error": null
+    },
+    {
+      "service": "auth_service",
+      "endpoint": "/auth/login",
+      "method": "POST",
+      "status_code": 422,
+      "response_time": 31.24,
+      "success": false,
+      "response_body": {
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body"
+            ],
+            "msg": "Field required",
+            "input": null
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "service": "auth_service",
+      "endpoint": "/auth/roles",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 14.0,
+      "success": true,
+      "response_body": [
+        "Owner",
+        "Admin",
+        "Editor",
+        "Viewer"
+      ],
+      "error": null
+    },
+    {
+      "service": "ai_modeling_service",
+      "endpoint": "/health",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 9.82,
+      "success": true,
+      "response_body": {
+        "status": "healthy",
+        "service": "ai_modeling_service",
+        "timestamp": "2025-07-09T11:28:15.707649",
+        "uptime": 135699.4350886345,
+        "version": "1.0.0",
+        "environment": "development",
+        "database_connected": false
+      },
+      "error": null
+    },
+    {
+      "service": "ai_modeling_service",
+      "endpoint": "/metrics",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 8.3,
+      "success": true,
+      "response_body": {
+        "ai_modeling_uptime_seconds": 135699.44379544258,
+        "ai_modeling_requests_total": 0,
+        "ai_modeling_generations_total": 0,
+        "ai_modeling_feedback_total": 0
+      },
+      "error": null
+    },
+    {
+      "service": "ai_modeling_service",
+      "endpoint": "/ai_modeling/generate",
+      "method": "POST",
+      "status_code": 401,
+      "response_time": 11.97,
+      "success": false,
+      "response_body": {
+        "detail": "Missing auth context"
+      },
+      "error": null
+    },
+    {
+      "service": "ai_modeling_service",
+      "endpoint": "/ai_modeling/history/test-user-456",
+      "method": "GET",
+      "status_code": 401,
+      "response_time": 8.54,
+      "success": false,
+      "response_body": {
+        "detail": "Missing auth context"
+      },
+      "error": null
+    },
+    {
+      "service": "usage_service",
+      "endpoint": "/health",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 26.98,
+      "success": true,
+      "response_body": {
+        "status": "healthy",
+        "service": "usage_service",
+        "timestamp": "2025-07-09T11:28:15.764480",
+        "uptime": 4886.247620582581,
+        "version": "1.0.0",
+        "environment": "development",
+        "database_connected": false
+      },
+      "error": null
+    },
+    {
+      "service": "usage_service",
+      "endpoint": "/metrics",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 10.31,
+      "success": true,
+      "response_body": {
+        "usage_uptime_seconds": 4886.258768320084,
+        "usage_requests_total": 0,
+        "usage_metrics_fetched": 0,
+        "usage_audit_events": 0
+      },
+      "error": null
+    },
+    {
+      "service": "usage_service",
+      "endpoint": "/usage/tenant/test-tenant-123",
+      "method": "GET",
+      "status_code": 401,
+      "response_time": 20.98,
+      "success": false,
+      "response_body": {
+        "detail": "Missing auth context"
+      },
+      "error": null
+    },
+    {
+      "service": "usage_service",
+      "endpoint": "/usage/user/test-user-456",
+      "method": "GET",
+      "status_code": 404,
+      "response_time": 9.17,
+      "success": false,
+      "response_body": {
+        "detail": "Not Found"
+      },
+      "error": null
+    },
+    {
+      "service": "notification_service",
+      "endpoint": "/health",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 9.84,
+      "success": true,
+      "response_body": {
+        "status": "healthy",
+        "service": "notification_service",
+        "timestamp": "2025-07-09T11:28:15.816846",
+        "uptime": 4886.275804519653,
+        "version": "1.0.0",
+        "environment": "development",
+        "database_connected": false
+      },
+      "error": null
+    },
+    {
+      "service": "notification_service",
+      "endpoint": "/metrics",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 9.82,
+      "success": true,
+      "response_body": {
+        "notification_uptime_seconds": 4886.286310434341,
+        "notification_requests_total": 0,
+        "notification_sent_total": 0,
+        "notification_delivered_total": 0
+      },
+      "error": null
+    },
+    {
+      "service": "notification_service",
+      "endpoint": "/notification/send",
+      "method": "POST",
+      "status_code": 404,
+      "response_time": 9.14,
+      "success": false,
+      "response_body": {
+        "detail": "Not Found"
+      },
+      "error": null
+    },
+    {
+      "service": "audit_log_service",
+      "endpoint": "/health",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 16.67,
+      "success": true,
+      "response_body": {
+        "status": "healthy",
+        "service": "audit_log_service",
+        "timestamp": "2025-07-09T11:28:15.852482",
+        "uptime": 4348.770793199539,
+        "version": "1.0.0",
+        "environment": "development",
+        "database_connected": false
+      },
+      "error": null
+    },
+    {
+      "service": "audit_log_service",
+      "endpoint": "/metrics",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 13.64,
+      "success": true,
+      "response_body": {
+        "audit_log_uptime_seconds": 4348.786512136459,
+        "audit_log_requests_total": 0,
+        "audit_log_events_total": 0,
+        "audit_log_errors_total": 0
+      },
+      "error": null
+    },
+    {
+      "service": "audit_log_service",
+      "endpoint": "/audit_log/query",
+      "method": "GET",
+      "status_code": 404,
+      "response_time": 20.11,
+      "success": false,
+      "response_body": {
+        "detail": "Not Found"
+      },
+      "error": null
+    },
+    {
+      "service": "billing_service",
+      "endpoint": "/health",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 30.87,
+      "success": true,
+      "response_body": {
+        "status": "healthy",
+        "service": "billing_service",
+        "timestamp": "2025-07-09T11:28:15.920765",
+        "uptime": 138605.45004487038,
+        "version": "1.0.0",
+        "environment": "development",
+        "database_connected": false
+      },
+      "error": null
+    },
+    {
+      "service": "billing_service",
+      "endpoint": "/metrics",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 6.67,
+      "success": true,
+      "response_body": {
+        "billing_uptime_seconds": 138605.45730161667,
+        "billing_requests_total": 0,
+        "billing_upgrades_total": 0,
+        "billing_alerts_triggered": 0
+      },
+      "error": null
+    },
+    {
+      "service": "billing_service",
+      "endpoint": "/billing/tenant/test-tenant-123",
+      "method": "GET",
+      "status_code": 403,
+      "response_time": 10.6,
+      "success": false,
+      "response_body": {
+        "detail": "Insufficient role"
+      },
+      "error": null
+    },
+    {
+      "service": "billing_service",
+      "endpoint": "/billing/plans",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 26.96,
+      "success": true,
+      "response_body": [
+        {
+          "plan_id": "basic-plan",
+          "name": "Basic Plan",
+          "limits": {
+            "api_calls": 1000,
+            "storage_gb": 10,
+            "users": 5
+          },
+          "price_per_month": 29.99
+        }
+      ],
+      "error": null
+    },
+    {
+      "service": "billing_service",
+      "endpoint": "/billing/usage_report",
+      "method": "GET",
+      "status_code": 405,
+      "response_time": 16.01,
+      "success": false,
+      "response_body": {
+        "detail": "Method Not Allowed"
+      },
+      "error": null
+    },
+    {
+      "service": "invoice_service",
+      "endpoint": "/health",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 19.49,
+      "success": true,
+      "response_body": {
+        "status": "healthy",
+        "service": "invoice_service",
+        "timestamp": "2025-07-09T11:28:16.002932",
+        "uptime": 4204.931428194046,
+        "version": "1.0.0",
+        "environment": "development",
+        "database_connected": false
+      },
+      "error": null
+    },
+    {
+      "service": "invoice_service",
+      "endpoint": "/metrics",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 16.46,
+      "success": true,
+      "response_body": {
+        "invoice_uptime_seconds": 4204.948080539703,
+        "invoice_requests_total": 0,
+        "invoice_generated_total": 0,
+        "invoice_paid_total": 0
+      },
+      "error": null
+    },
+    {
+      "service": "invoice_service",
+      "endpoint": "/invoices/test-tenant-123",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 30.56,
+      "success": true,
+      "response_body": [],
+      "error": null
+    },
+    {
+      "service": "invoice_service",
+      "endpoint": "/invoices/generate/test-tenant-123",
+      "method": "POST",
+      "status_code": 202,
+      "response_time": 17.95,
+      "success": true,
+      "response_body": {
+        "message": "Invoice generation is queued. This is a stub response.",
+        "invoice_id": "stub-{tenant_id}-001",
+        "status": "pending"
+      },
+      "error": null
+    },
+    {
+      "service": "monitoring_dashboard_service",
+      "endpoint": "/health",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 16.53,
+      "success": true,
+      "response_body": {
+        "status": "healthy",
+        "service": "monitoring_dashboard",
+        "timestamp": "2025-07-09T11:28:16.085085",
+        "uptime": 141448.51783251762
+      },
+      "error": null
+    },
+    {
+      "service": "monitoring_dashboard_service",
+      "endpoint": "/metrics",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 15.95,
+      "success": true,
+      "response_body": {
+        "service_uptime_seconds": 141448.53399538994,
+        "services_total": 7,
+        "services_healthy": 4,
+        "services_unhealthy": 3,
+        "last_check_timestamp": 1752060496.1013074,
+        "service_gateway_service_status": 0,
+        "service_gateway_service_response_time_ms": 19.17,
+        "service_auth_service_status": 1,
+        "service_auth_service_response_time_ms": 46.19,
+        "service_ai_modeling_service_status": 1,
+        "service_ai_modeling_service_response_time_ms": 46.01,
+        "service_usage_service_status": 1,
+        "service_usage_service_response_time_ms": 47.98,
+        "service_billing_service_status": 0,
+        "service_billing_service_response_time_ms": 21.73,
+        "service_invoice_service_status": 1,
+        "service_invoice_service_response_time_ms": 48.13,
+        "service_notification_service_status": 0,
+        "service_notification_service_response_time_ms": 21.78
+      },
+      "error": null
+    },
+    {
+      "service": "monitoring_dashboard_service",
+      "endpoint": "/dashboard",
+      "method": "GET",
+      "status_code": 404,
+      "response_time": 15.3,
+      "success": false,
+      "response_body": {
+        "detail": "Not Found"
+      },
+      "error": null
+    },
+    {
+      "service": "auth_service",
+      "endpoint": "/auth/login",
+      "method": "POST",
+      "status_code": 422,
+      "response_time": 18.68,
+      "success": false,
+      "response_body": {
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "role"
+            ],
+            "msg": "Field required",
+            "input": {
+              "email": "test@example.com",
+              "password": "testpass123",
+              "tenant_id": "test-tenant-123"
+            }
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "service": "ai_modeling_service",
+      "endpoint": "/ai_modeling/generate",
+      "method": "POST",
+      "status_code": 500,
+      "response_time": 61.63,
+      "success": false,
+      "response_body": "Internal Server Error",
+      "error": null
+    },
+    {
+      "service": "invoice_service",
+      "endpoint": "/invoices/generate/test-tenant-123",
+      "method": "POST",
+      "status_code": 202,
+      "response_time": 22.2,
+      "success": true,
+      "response_body": {
+        "message": "Invoice generation is queued. This is a stub response.",
+        "invoice_id": "stub-test-tenant-123-001",
+        "status": "pending"
+      },
+      "error": null
+    },
+    {
+      "service": "notification_service",
+      "endpoint": "/notification/send",
+      "method": "POST",
+      "status_code": 404,
+      "response_time": 14.16,
+      "success": false,
+      "response_body": {
+        "detail": "Not Found"
+      },
+      "error": null
+    },
+    {
+      "service": "audit_log_service",
+      "endpoint": "/audit_log/query?tenant_id=test-tenant-123",
+      "method": "GET",
+      "status_code": 404,
+      "response_time": 15.55,
+      "success": false,
+      "response_body": {
+        "detail": "Not Found"
+      },
+      "error": null
+    }
+  ],
+  "summary": {
+    "total_tests": 38,
+    "successful_tests": 22,
+    "failed_tests": 16
+  }
+}

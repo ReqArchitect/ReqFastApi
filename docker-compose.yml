@@ -175,6 +175,8 @@ services:
       timeout: 10s
       retries: 5
     restart: always
+    ports:
+      - "8005:8000"
 
   onboarding_state_service:
     build: ./services/onboarding_state_service/app
@@ -214,6 +216,8 @@ services:
       timeout: 10s
       retries: 5
     restart: always
+    ports:
+      - "8007:8000"
 
   event_bus:
     image: redis:7
@@ -248,6 +252,8 @@ services:
       timeout: 10s
       retries: 5
     restart: always
+    ports:
+      - "8006:8000"
 
   billing_service:
     build: ./services/billing_service

@@ -26,4 +26,4 @@ class BillingEvent(Base):
     tenant_id = Column(String)
     event_type = Column(String)
     timestamp = Column(DateTime, default=datetime.utcnow)
-    metadata = Column(JSON)
+    event_metadata = Column(JSON)

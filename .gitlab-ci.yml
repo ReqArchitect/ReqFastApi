@@ -1,0 +1,54 @@
+stages:
+  - validate
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+
+validation:
+  stage: validate
+  image: python:3.11
+  services:
+    - docker:dind
+  before_script:
+    - apt-get update && apt-get install -y docker-compose curl
+    - pip install -r validation_requirements.txt
+    - mkdir -p logs/validation
+  script:
+    # Start services
+    - docker-compose up -d
+    - sleep 30  # Wait for services to be ready
+    
+    # Run validation framework
+    - |
+      python continuous_validation_framework.py \
+        --run-once \
+        --config validation_config.json
+      
+    # Check critical services health
+    - python scripts/check_critical_health.py
+    
+    # Generate validation summary
+    - python scripts/generate_validation_summary.py
+    
+    # Send alerts if needed
+    - python scripts/send_email_alert.py
+  after_script:
+    - docker-compose down
+  artifacts:
+    name: "validation-reports-$CI_PIPELINE_ID"
+    paths:
+      - validation_outputs/
+      - logs/validation/
+      - validation_summary.md
+    expire_in: 30 days
+    reports:
+      junit: validation_outputs/*.xml
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+  environment:
+    name: $CI_ENVIRONMENT_NAME
+    url: $CI_ENVIRONMENT_URL 

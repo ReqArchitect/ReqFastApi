@@ -1,0 +1,102 @@
+{
+  "services": {
+    "gateway_service": {
+      "port": 8080,
+      "endpoints": [
+        {"path": "/health", "method": "GET", "expected_status": 200},
+        {"path": "/metrics", "method": "GET", "expected_status": 200},
+        {"path": "/api/v1/health", "method": "GET", "expected_status": 200}
+      ]
+    },
+    "auth_service": {
+      "port": 8001,
+      "endpoints": [
+        {"path": "/health", "method": "GET", "expected_status": 200},
+        {"path": "/metrics", "method": "GET", "expected_status": 200},
+        {"path": "/auth/login", "method": "POST", "expected_status": [200, 401, 422]},
+        {"path": "/auth/roles", "method": "GET", "expected_status": 200}
+      ]
+    },
+    "ai_modeling_service": {
+      "port": 8002,
+      "endpoints": [
+        {"path": "/health", "method": "GET", "expected_status": 200},
+        {"path": "/metrics", "method": "GET", "expected_status": 200},
+        {"path": "/ai_modeling/generate", "method": "POST", "expected_status": [200, 401, 422, 500]},
+        {"path": "/ai_modeling/history/{user_id}", "method": "GET", "expected_status": [200, 401, 404]}
+      ]
+    },
+    "usage_service": {
+      "port": 8005,
+      "endpoints": [
+        {"path": "/health", "method": "GET", "expected_status": 200},
+        {"path": "/metrics", "method": "GET", "expected_status": 200},
+        {"path": "/usage/tenant/{tenant_id}", "method": "GET", "expected_status": [200, 401, 403]},
+        {"path": "/usage/user/{user_id}", "method": "GET", "expected_status": [200, 401, 404]}
+      ]
+    },
+    "notification_service": {
+      "port": 8006,
+      "endpoints": [
+        {"path": "/health", "method": "GET", "expected_status": 200},
+        {"path": "/metrics", "method": "GET", "expected_status": 200},
+        {"path": "/notification/send", "method": "POST", "expected_status": [200, 401, 404]}
+      ]
+    },
+    "audit_log_service": {
+      "port": 8007,
+      "endpoints": [
+        {"path": "/health", "method": "GET", "expected_status": 200},
+        {"path": "/metrics", "method": "GET", "expected_status": 200},
+        {"path": "/audit_log/query", "method": "GET", "expected_status": [200, 401, 404]}
+      ]
+    },
+    "billing_service": {
+      "port": 8010,
+      "endpoints": [
+        {"path": "/health", "method": "GET", "expected_status": 200},
+        {"path": "/metrics", "method": "GET", "expected_status": 200},
+        {"path": "/billing/tenant/{tenant_id}", "method": "GET", "expected_status": [200, 401, 403]},
+        {"path": "/billing/plans", "method": "GET", "expected_status": 200},
+        {"path": "/billing/usage_report", "method": "GET", "expected_status": [200, 405]}
+      ]
+    },
+    "invoice_service": {
+      "port": 8011,
+      "endpoints": [
+        {"path": "/health", "method": "GET", "expected_status": 200},
+        {"path": "/metrics", "method": "GET", "expected_status": 200},
+        {"path": "/invoices/{tenant_id}", "method": "GET", "expected_status": 200},
+        {"path": "/invoices/generate/{tenant_id}", "method": "POST", "expected_status": [200, 202]}
+      ]
+    },
+    "monitoring_dashboard_service": {
+      "port": 8012,
+      "endpoints": [
+        {"path": "/health", "method": "GET", "expected_status": 200},
+        {"path": "/metrics", "method": "GET", "expected_status": 200},
+        {"path": "/dashboard", "method": "GET", "expected_status": [200, 404]}
+      ]
+    }
+  },
+  "test_data": {
+    "tenant_id": "test-tenant-123",
+    "user_id": "test-user-456",
+    "email": "test@example.com",
+    "password": "testpass123",
+    "role": "Admin"
+  },
+  "validation_settings": {
+    "retry_attempts": 3,
+    "retry_delay": 2,
+    "timeout": 30,
+    "check_interval_minutes": 15,
+    "history_retention_days": 7
+  },
+  "jwt_settings": {
+    "enabled": true,
+    "secret": "supersecret",
+    "algorithm": "HS256",
+    "expiration_hours": 24
+  }
+} 

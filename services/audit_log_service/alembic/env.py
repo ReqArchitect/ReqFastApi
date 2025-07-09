@@ -1,14 +1,29 @@
+import os
+import sys
 from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 from alembic import context
-import os
-import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'app'))
+from dotenv import load_dotenv
+
+# Add the current directory and parent directory to sys.path
+current_dir = os.path.abspath(os.path.dirname(__file__))
+parent_dir = os.path.abspath(os.path.join(current_dir, '..'))
+sys.path.insert(0, parent_dir)
+
+# Import Base from app.models
 from app.models import Base
+
+# Load environment variables from .env file
+load_dotenv()
 
 config = context.config
 fileConfig(config.config_file_name)
 target_metadata = Base.metadata
+
+# Set sqlalchemy.url from env
+db_url = os.getenv("DATABASE_URL")
+if db_url:
+    config.set_main_option("sqlalchemy.url", db_url)
 
 def run_migrations_offline():
     url = config.get_main_option("sqlalchemy.url")

@@ -40,7 +40,7 @@ def upgrade():
         sa.Column('tenant_id', sa.String(), nullable=True),
         sa.Column('event_type', sa.String(), nullable=True),
         sa.Column('timestamp', sa.DateTime(), nullable=True),
-        sa.Column('metadata', postgresql.JSON(astext_type=sa.Text()), nullable=True),
+        sa.Column('event_metadata', postgresql.JSON(astext_type=sa.Text()), nullable=True),
         sa.PrimaryKeyConstraint('event_id')
     )
 

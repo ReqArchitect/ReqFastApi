@@ -1,0 +1,676 @@
+{
+  "timestamp": "2025-07-09T12:39:52.363559",
+  "cycle_results": [
+    {
+      "service_name": "gateway_service",
+      "endpoint": "/health",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 79.3306827545166,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:38.388482",
+      "retry_count": 0,
+      "response_body": {
+        "status": "healthy",
+        "service": "gateway_service",
+        "timestamp": "2025-07-09T11:39:38.385029",
+        "uptime": 54017.87951231003,
+        "version": "1.0.0",
+        "environment": "development"
+      }
+    },
+    {
+      "service_name": "gateway_service",
+      "endpoint": "/metrics",
+      "method": "GET",
+      "status_code": 500,
+      "response_time": 36.03625297546387,
+      "success": false,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:42.644603",
+      "retry_count": 2,
+      "response_body": "Internal Server Error"
+    },
+    {
+      "service_name": "gateway_service",
+      "endpoint": "/api/v1/health",
+      "method": "GET",
+      "status_code": 500,
+      "response_time": 82.53908157348633,
+      "success": false,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:46.755621",
+      "retry_count": 2,
+      "response_body": "Internal Server Error"
+    },
+    {
+      "service_name": "auth_service",
+      "endpoint": "/health",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 18.43118667602539,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:46.801612",
+      "retry_count": 0,
+      "response_body": {
+        "status": "healthy",
+        "service": "auth_service",
+        "timestamp": "2025-07-09T11:39:46.798217",
+        "uptime": 139752.29926419258,
+        "version": "1.0.0",
+        "environment": "development",
+        "database_connected": false
+      }
+    },
+    {
+      "service_name": "auth_service",
+      "endpoint": "/metrics",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 11.239767074584961,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:46.818220",
+      "retry_count": 0,
+      "response_body": {
+        "auth_uptime_seconds": 139752.31437945366,
+        "auth_logins_total": 0,
+        "auth_logouts_total": 0,
+        "auth_tokens_issued": 0,
+        "auth_tokens_revoked": 0
+      }
+    },
+    {
+      "service_name": "auth_service",
+      "endpoint": "/auth/login",
+      "method": "POST",
+      "status_code": 422,
+      "response_time": 159.37066078186035,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:46.983805",
+      "retry_count": 0,
+      "response_body": {
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "role"
+            ],
+            "msg": "Field required",
+            "input": {
+              "email": "test@example.com",
+              "password": "testpass123",
+              "tenant_id": "test-tenant-123"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "service_name": "auth_service",
+      "endpoint": "/auth/roles",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 12.164592742919922,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:46.998829",
+      "retry_count": 0,
+      "response_body": [
+        "Owner",
+        "Admin",
+        "Editor",
+        "Viewer"
+      ]
+    },
+    {
+      "service_name": "ai_modeling_service",
+      "endpoint": "/health",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 12.999773025512695,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:47.027218",
+      "retry_count": 0,
+      "response_body": {
+        "status": "healthy",
+        "service": "ai_modeling_service",
+        "timestamp": "2025-07-09T11:39:47.023708",
+        "uptime": 604.5136935710907,
+        "version": "1.0.0",
+        "environment": "development",
+        "database_connected": false
+      }
+    },
+    {
+      "service_name": "ai_modeling_service",
+      "endpoint": "/metrics",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 6.0443878173828125,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:47.035927",
+      "retry_count": 0,
+      "response_body": {
+        "ai_modeling_uptime_seconds": 604.5214879512787,
+        "ai_modeling_requests_total": 0,
+        "ai_modeling_generations_total": 0,
+        "ai_modeling_feedback_total": 0
+      }
+    },
+    {
+      "service_name": "ai_modeling_service",
+      "endpoint": "/ai_modeling/generate",
+      "method": "POST",
+      "status_code": 500,
+      "response_time": 558.1150054931641,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:47.596606",
+      "retry_count": 0,
+      "response_body": "Internal Server Error"
+    },
+    {
+      "service_name": "ai_modeling_service",
+      "endpoint": "/ai_modeling/history/test-user-456",
+      "method": "GET",
+      "status_code": 500,
+      "response_time": 16.611099243164062,
+      "success": false,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:51.707177",
+      "retry_count": 2,
+      "response_body": "Internal Server Error"
+    },
+    {
+      "service_name": "usage_service",
+      "endpoint": "/health",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 7.906436920166016,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:51.727176",
+      "retry_count": 0,
+      "response_body": {
+        "status": "healthy",
+        "service": "usage_service",
+        "timestamp": "2025-07-09T11:39:51.723893",
+        "uptime": 5582.207015037537,
+        "version": "1.0.0",
+        "environment": "development",
+        "database_connected": false
+      }
+    },
+    {
+      "service_name": "usage_service",
+      "endpoint": "/metrics",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 4.864931106567383,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:51.735363",
+      "retry_count": 0,
+      "response_body": {
+        "usage_uptime_seconds": 5582.215717792511,
+        "usage_requests_total": 0,
+        "usage_metrics_fetched": 0,
+        "usage_audit_events": 0
+      }
+    },
+    {
+      "service_name": "usage_service",
+      "endpoint": "/usage/tenant/test-tenant-123",
+      "method": "GET",
+      "status_code": 401,
+      "response_time": 28.673171997070312,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:51.767140",
+      "retry_count": 0,
+      "response_body": {
+        "detail": "Missing auth context"
+      }
+    },
+    {
+      "service_name": "usage_service",
+      "endpoint": "/usage/user/test-user-456",
+      "method": "GET",
+      "status_code": 404,
+      "response_time": 4.726886749267578,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:51.774393",
+      "retry_count": 0,
+      "response_body": {
+        "detail": "Not Found"
+      }
+    },
+    {
+      "service_name": "notification_service",
+      "endpoint": "/health",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 10.004997253417969,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:51.796767",
+      "retry_count": 0,
+      "response_body": {
+        "status": "healthy",
+        "service": "notification_service",
+        "timestamp": "2025-07-09T11:39:51.793006",
+        "uptime": 5582.251882791519,
+        "version": "1.0.0",
+        "environment": "development",
+        "database_connected": false
+      }
+    },
+    {
+      "service_name": "notification_service",
+      "endpoint": "/metrics",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 5.1422119140625,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:51.805234",
+      "retry_count": 0,
+      "response_body": {
+        "notification_uptime_seconds": 5582.260564565659,
+        "notification_requests_total": 0,
+        "notification_sent_total": 0,
+        "notification_delivered_total": 0
+      }
+    },
+    {
+      "service_name": "notification_service",
+      "endpoint": "/notification/send",
+      "method": "POST",
+      "status_code": 404,
+      "response_time": 6.738901138305664,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:51.814967",
+      "retry_count": 0,
+      "response_body": {
+        "detail": "Not Found"
+      }
+    },
+    {
+      "service_name": "audit_log_service",
+      "endpoint": "/health",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 188.3842945098877,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:52.013875",
+      "retry_count": 0,
+      "response_body": {
+        "status": "healthy",
+        "service": "audit_log_service",
+        "timestamp": "2025-07-09T11:39:51.976706",
+        "uptime": 7.939338684082031e-05,
+        "version": "1.0.0",
+        "environment": "development",
+        "database_connected": false
+      }
+    },
+    {
+      "service_name": "audit_log_service",
+      "endpoint": "/metrics",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 5.123376846313477,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:52.021683",
+      "retry_count": 0,
+      "response_body": {
+        "audit_log_uptime_seconds": 0.04124045372009277,
+        "audit_log_requests_total": 0,
+        "audit_log_events_total": 0,
+        "audit_log_errors_total": 0
+      }
+    },
+    {
+      "service_name": "audit_log_service",
+      "endpoint": "/audit_log/query",
+      "method": "GET",
+      "status_code": 404,
+      "response_time": 6.180286407470703,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:52.030669",
+      "retry_count": 0,
+      "response_body": {
+        "detail": "Not Found"
+      }
+    },
+    {
+      "service_name": "billing_service",
+      "endpoint": "/health",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 8.692264556884766,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:52.051690",
+      "retry_count": 0,
+      "response_body": {
+        "status": "healthy",
+        "service": "billing_service",
+        "timestamp": "2025-07-09T11:39:52.048988",
+        "uptime": 139301.5782570839,
+        "version": "1.0.0",
+        "environment": "development",
+        "database_connected": false
+      }
+    },
+    {
+      "service_name": "billing_service",
+      "endpoint": "/metrics",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 3.129720687866211,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:52.058459",
+      "retry_count": 0,
+      "response_body": {
+        "billing_uptime_seconds": 139301.58533000946,
+        "billing_requests_total": 0,
+        "billing_upgrades_total": 0,
+        "billing_alerts_triggered": 0
+      }
+    },
+    {
+      "service_name": "billing_service",
+      "endpoint": "/billing/tenant/test-tenant-123",
+      "method": "GET",
+      "status_code": 403,
+      "response_time": 22.937297821044922,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:52.084430",
+      "retry_count": 0,
+      "response_body": {
+        "detail": "Insufficient role"
+      }
+    },
+    {
+      "service_name": "billing_service",
+      "endpoint": "/billing/plans",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 84.37108993530273,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:52.171862",
+      "retry_count": 0,
+      "response_body": [
+        {
+          "plan_id": "basic-plan",
+          "name": "Basic Plan",
+          "limits": {
+            "api_calls": 1000,
+            "storage_gb": 10,
+            "users": 5
+          },
+          "price_per_month": 29.99
+        }
+      ]
+    },
+    {
+      "service_name": "billing_service",
+      "endpoint": "/billing/usage_report",
+      "method": "GET",
+      "status_code": 405,
+      "response_time": 4.290580749511719,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:52.179308",
+      "retry_count": 0,
+      "response_body": {
+        "detail": "Method Not Allowed"
+      }
+    },
+    {
+      "service_name": "invoice_service",
+      "endpoint": "/health",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 9.769439697265625,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:52.201853",
+      "retry_count": 0,
+      "response_body": {
+        "status": "healthy",
+        "service": "invoice_service",
+        "timestamp": "2025-07-09T11:39:52.198879",
+        "uptime": 4901.127377033234,
+        "version": "1.0.0",
+        "environment": "development",
+        "database_connected": false
+      }
+    },
+    {
+      "service_name": "invoice_service",
+      "endpoint": "/metrics",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 4.616260528564453,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:52.209232",
+      "retry_count": 0,
+      "response_body": {
+        "invoice_uptime_seconds": 4901.134920358658,
+        "invoice_requests_total": 0,
+        "invoice_generated_total": 0,
+        "invoice_paid_total": 0
+      }
+    },
+    {
+      "service_name": "invoice_service",
+      "endpoint": "/invoices/test-tenant-123",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 90.73758125305176,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:52.303458",
+      "retry_count": 0,
+      "response_body": []
+    },
+    {
+      "service_name": "invoice_service",
+      "endpoint": "/invoices/generate/test-tenant-123",
+      "method": "POST",
+      "status_code": 202,
+      "response_time": 8.872509002685547,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:52.315308",
+      "retry_count": 0,
+      "response_body": {
+        "message": "Invoice generation is queued. This is a stub response.",
+        "invoice_id": "stub-test-tenant-123-001",
+        "status": "pending"
+      }
+    },
+    {
+      "service_name": "monitoring_dashboard_service",
+      "endpoint": "/health",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 11.816024780273438,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:52.342044",
+      "retry_count": 0,
+      "response_body": {
+        "status": "healthy",
+        "service": "monitoring_dashboard",
+        "timestamp": "2025-07-09T11:39:52.339165",
+        "uptime": 142144.77192258835
+      }
+    },
+    {
+      "service_name": "monitoring_dashboard_service",
+      "endpoint": "/metrics",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 6.698131561279297,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:52.351105",
+      "retry_count": 0,
+      "response_body": {
+        "service_uptime_seconds": 142144.77979016304,
+        "services_total": 7,
+        "services_healthy": 4,
+        "services_unhealthy": 3,
+        "last_check_timestamp": 1752061192.3478067,
+        "service_gateway_service_status": 0,
+        "service_gateway_service_response_time_ms": 19.17,
+        "service_auth_service_status": 1,
+        "service_auth_service_response_time_ms": 46.19,
+        "service_ai_modeling_service_status": 1,
+        "service_ai_modeling_service_response_time_ms": 46.01,
+        "service_usage_service_status": 1,
+        "service_usage_service_response_time_ms": 47.98,
+        "service_billing_service_status": 0,
+        "service_billing_service_response_time_ms": 21.73,
+        "service_invoice_service_status": 1,
+        "service_invoice_service_response_time_ms": 48.13,
+        "service_notification_service_status": 0,
+        "service_notification_service_response_time_ms": 21.78
+      }
+    },
+    {
+      "service_name": "monitoring_dashboard_service",
+      "endpoint": "/dashboard",
+      "method": "GET",
+      "status_code": 404,
+      "response_time": 6.894111633300781,
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-07-09T12:39:52.360180",
+      "retry_count": 0,
+      "response_body": {
+        "detail": "Not Found"
+      }
+    }
+  ],
+  "service_health": {
+    "gateway_service": {
+      "service_name": "gateway_service",
+      "uptime_percentage": 33.33333333333334,
+      "error_rate": 66.66666666666666,
+      "api_success_ratio": 33.33333333333333,
+      "average_response_time": 65.96867243448894,
+      "total_requests": 3,
+      "failed_requests": 2,
+      "last_check": "2025-07-09T12:39:52.362850",
+      "container_status": "running"
+    },
+    "auth_service": {
+      "service_name": "auth_service",
+      "uptime_percentage": 100.0,
+      "error_rate": 0.0,
+      "api_success_ratio": 100.0,
+      "average_response_time": 50.301551818847656,
+      "total_requests": 4,
+      "failed_requests": 0,
+      "last_check": "2025-07-09T12:39:52.362866",
+      "container_status": "running"
+    },
+    "ai_modeling_service": {
+      "service_name": "ai_modeling_service",
+      "uptime_percentage": 75.0,
+      "error_rate": 25.0,
+      "api_success_ratio": 75.0,
+      "average_response_time": 148.4425663948059,
+      "total_requests": 4,
+      "failed_requests": 1,
+      "last_check": "2025-07-09T12:39:52.362872",
+      "container_status": "running"
+    },
+    "usage_service": {
+      "service_name": "usage_service",
+      "uptime_percentage": 100.0,
+      "error_rate": 0.0,
+      "api_success_ratio": 100.0,
+      "average_response_time": 11.542856693267822,
+      "total_requests": 4,
+      "failed_requests": 0,
+      "last_check": "2025-07-09T12:39:52.362877",
+      "container_status": "running"
+    },
+    "notification_service": {
+      "service_name": "notification_service",
+      "uptime_percentage": 100.0,
+      "error_rate": 0.0,
+      "api_success_ratio": 100.0,
+      "average_response_time": 7.295370101928711,
+      "total_requests": 3,
+      "failed_requests": 0,
+      "last_check": "2025-07-09T12:39:52.362881",
+      "container_status": "running"
+    },
+    "audit_log_service": {
+      "service_name": "audit_log_service",
+      "uptime_percentage": 100.0,
+      "error_rate": 0.0,
+      "api_success_ratio": 100.0,
+      "average_response_time": 66.56265258789062,
+      "total_requests": 3,
+      "failed_requests": 0,
+      "last_check": "2025-07-09T12:39:52.362885",
+      "container_status": "running"
+    },
+    "billing_service": {
+      "service_name": "billing_service",
+      "uptime_percentage": 100.0,
+      "error_rate": 0.0,
+      "api_success_ratio": 100.0,
+      "average_response_time": 24.68419075012207,
+      "total_requests": 5,
+      "failed_requests": 0,
+      "last_check": "2025-07-09T12:39:52.362889",
+      "container_status": "running"
+    },
+    "invoice_service": {
+      "service_name": "invoice_service",
+      "uptime_percentage": 100.0,
+      "error_rate": 0.0,
+      "api_success_ratio": 100.0,
+      "average_response_time": 28.498947620391846,
+      "total_requests": 4,
+      "failed_requests": 0,
+      "last_check": "2025-07-09T12:39:52.362892",
+      "container_status": "running"
+    },
+    "monitoring_dashboard_service": {
+      "service_name": "monitoring_dashboard_service",
+      "uptime_percentage": 100.0,
+      "error_rate": 0.0,
+      "api_success_ratio": 100.0,
+      "average_response_time": 8.469422658284506,
+      "total_requests": 3,
+      "failed_requests": 0,
+      "last_check": "2025-07-09T12:39:52.362895",
+      "container_status": "running"
+    }
+  }
+}

@@ -1,0 +1,113 @@
+name: ReqArchitect Validation Framework
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '*/15 * * * *'  # Every 15 minutes
+  workflow_dispatch:  # Manual trigger
+
+env:
+  PYTHON_VERSION: '3.11'
+  DOCKER_COMPOSE_VERSION: '2.20.0'
+
+jobs:
+  validate-services:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/v${{ env.DOCKER_COMPOSE_VERSION }}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          
+      - name: Start Docker daemon
+        run: |
+          sudo systemctl start docker
+          sudo systemctl status docker
+          
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r validation_requirements.txt
+          
+      - name: Create validation logs directory
+        run: mkdir -p logs/validation
+          
+      - name: Start ReqArchitect services
+        run: |
+          docker-compose up -d
+          # Wait for services to be ready
+          sleep 30
+          
+      - name: Run validation framework
+        env:
+          VALIDATION_ENV: ${{ github.event_name == 'schedule' && 'production' || 'development' }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          TEST_TENANT_ID: ${{ secrets.TEST_TENANT_ID || 'test-tenant-123' }}
+          TEST_USER_ID: ${{ secrets.TEST_USER_ID || 'test-user-456' }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          EMAIL_RECIPIENTS: ${{ secrets.EMAIL_RECIPIENTS }}
+        run: |
+          python continuous_validation_framework.py --run-once --config validation_config.json
+          
+      - name: Check critical services health
+        id: health-check
+        run: |
+          # Parse validation results and check critical services
+          python scripts/check_critical_health.py
+          
+      - name: Upload validation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-reports-${{ github.run_number }}
+          path: |
+            validation_outputs/
+            logs/validation/
+          retention-days: 30
+          
+      - name: Generate validation summary
+        if: always()
+        run: |
+          python scripts/generate_validation_summary.py
+          
+      - name: Upload validation summary
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: validation-summary-${{ github.run_number }}
+          path: validation_summary.md
+          
+      - name: Send Slack notification
+        if: always() && env.SLACK_WEBHOOK_URL != ''
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          webhook_url: ${{ env.SLACK_WEBHOOK_URL }}
+          text: |
+            ReqArchitect Validation Results
+            Run: ${{ github.run_number }}
+            Status: ${{ job.status }}
+            Critical Services: ${{ steps.health-check.outputs.critical_status }}
+            Success Rate: ${{ steps.health-check.outputs.success_rate }}%
+            
+      - name: Send email notification
+        if: always() && env.EMAIL_RECIPIENTS != ''
+        run: |
+          python scripts/send_email_alert.py
+          
+      - name: Fail on critical service issues
+        if: steps.health-check.outputs.critical_status == 'FAILED'
+        run: |
+          echo "Critical services are unhealthy. Failing build."
+          exit 1 

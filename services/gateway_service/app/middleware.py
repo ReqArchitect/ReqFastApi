@@ -12,6 +12,11 @@ rate_limit_store = defaultdict(list)
 
 class AuthMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
+        # Skip authentication for health checks
+        if request.url.path == "/health":
+            response = await call_next(request)
+            return response
+            
         auth_header = request.headers.get("Authorization")
         if not auth_header or not auth_header.startswith("Bearer "):
             raise HTTPException(status_code=401, detail="Missing or invalid token")

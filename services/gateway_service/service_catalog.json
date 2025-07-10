@@ -1,0 +1,355 @@
+{
+  "services": {
+    "auth": {
+      "service_name": "auth_service",
+      "base_path": "/auth",
+      "internal_url": "http://auth_service:8001",
+      "healthcheck_endpoint": "/health",
+      "timeout_ms": 5000,
+      "tenant_scope": "multi",
+      "cacheable": false,
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_ms": 1000
+      },
+      "rbac_required": true,
+      "rate_limit": {
+        "requests_per_minute": 100
+      }
+    },
+    "ai_modeling": {
+      "service_name": "ai_modeling_service",
+      "base_path": "/ai_modeling",
+      "internal_url": "http://ai_modeling_service:8002",
+      "healthcheck_endpoint": "/health",
+      "timeout_ms": 30000,
+      "tenant_scope": "multi",
+      "cacheable": false,
+      "retry_policy": {
+        "max_retries": 2,
+        "backoff_ms": 2000
+      },
+      "rbac_required": true,
+      "rate_limit": {
+        "requests_per_minute": 10
+      }
+    },
+    "usage": {
+      "service_name": "usage_service",
+      "base_path": "/usage",
+      "internal_url": "http://usage_service:8000",
+      "healthcheck_endpoint": "/health",
+      "timeout_ms": 10000,
+      "tenant_scope": "multi",
+      "cacheable": true,
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_ms": 1000
+      },
+      "rbac_required": true,
+      "rate_limit": {
+        "requests_per_minute": 50
+      }
+    },
+    "billing": {
+      "service_name": "billing_service",
+      "base_path": "/billing",
+      "internal_url": "http://billing_service:8010",
+      "healthcheck_endpoint": "/health",
+      "timeout_ms": 15000,
+      "tenant_scope": "multi",
+      "cacheable": false,
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_ms": 1000
+      },
+      "rbac_required": true,
+      "rate_limit": {
+        "requests_per_minute": 30
+      }
+    },
+    "invoice": {
+      "service_name": "invoice_service",
+      "base_path": "/invoice",
+      "internal_url": "http://invoice_service:8011",
+      "healthcheck_endpoint": "/health",
+      "timeout_ms": 10000,
+      "tenant_scope": "multi",
+      "cacheable": false,
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_ms": 1000
+      },
+      "rbac_required": true,
+      "rate_limit": {
+        "requests_per_minute": 30
+      }
+    },
+    "orchestrator": {
+      "service_name": "orchestrator_service",
+      "base_path": "/orchestrator",
+      "internal_url": "http://orchestrator_service:8001",
+      "healthcheck_endpoint": "/health",
+      "timeout_ms": 20000,
+      "tenant_scope": "multi",
+      "cacheable": false,
+      "retry_policy": {
+        "max_retries": 2,
+        "backoff_ms": 2000
+      },
+      "rbac_required": true,
+      "rate_limit": {
+        "requests_per_minute": 20
+      }
+    },
+    "onboarding": {
+      "service_name": "onboarding_state_service",
+      "base_path": "/onboarding",
+      "internal_url": "http://onboarding_state_service:8004",
+      "healthcheck_endpoint": "/health",
+      "timeout_ms": 10000,
+      "tenant_scope": "multi",
+      "cacheable": false,
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_ms": 1000
+      },
+      "rbac_required": true,
+      "rate_limit": {
+        "requests_per_minute": 50
+      }
+    },
+    "audit_log": {
+      "service_name": "audit_log_service",
+      "base_path": "/audit_log",
+      "internal_url": "http://audit_log_service:8005",
+      "healthcheck_endpoint": "/health",
+      "timeout_ms": 8000,
+      "tenant_scope": "multi",
+      "cacheable": false,
+      "retry_policy": {
+        "max_retries": 2,
+        "backoff_ms": 1000
+      },
+      "rbac_required": true,
+      "rate_limit": {
+        "requests_per_minute": 100
+      }
+    },
+    "assessment": {
+      "service_name": "assessment_service",
+      "base_path": "/assessment",
+      "internal_url": "http://assessment_service:8080",
+      "healthcheck_endpoint": "/health",
+      "timeout_ms": 15000,
+      "tenant_scope": "multi",
+      "cacheable": false,
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_ms": 1000
+      },
+      "rbac_required": true,
+      "rate_limit": {
+        "requests_per_minute": 40
+      }
+    },
+    "workpackage": {
+      "service_name": "workpackage_service",
+      "base_path": "/workpackage",
+      "internal_url": "http://workpackage_service:8080",
+      "healthcheck_endpoint": "/health",
+      "timeout_ms": 12000,
+      "tenant_scope": "multi",
+      "cacheable": false,
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_ms": 1000
+      },
+      "rbac_required": true,
+      "rate_limit": {
+        "requests_per_minute": 30
+      }
+    },
+    "architecture_suite": {
+      "service_name": "architecture_suite",
+      "base_path": "/architecture_suite",
+      "internal_url": "http://architecture_suite:8000",
+      "healthcheck_endpoint": "/health",
+      "timeout_ms": 20000,
+      "tenant_scope": "multi",
+      "cacheable": false,
+      "retry_policy": {
+        "max_retries": 2,
+        "backoff_ms": 2000
+      },
+      "rbac_required": true,
+      "rate_limit": {
+        "requests_per_minute": 25
+      }
+    },
+    "capability": {
+      "service_name": "capability_service",
+      "base_path": "/capability",
+      "internal_url": "http://capability_service:8080",
+      "healthcheck_endpoint": "/health",
+      "timeout_ms": 10000,
+      "tenant_scope": "multi",
+      "cacheable": false,
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_ms": 1000
+      },
+      "rbac_required": true,
+      "rate_limit": {
+        "requests_per_minute": 40
+      }
+    },
+    "goal": {
+      "service_name": "goal_service",
+      "base_path": "/goal",
+      "internal_url": "http://goal_service:8080",
+      "healthcheck_endpoint": "/health",
+      "timeout_ms": 10000,
+      "tenant_scope": "multi",
+      "cacheable": false,
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_ms": 1000
+      },
+      "rbac_required": true,
+      "rate_limit": {
+        "requests_per_minute": 40
+      }
+    },
+    "business_function": {
+      "service_name": "business_function_service",
+      "base_path": "/business_function",
+      "internal_url": "http://business_function_service:8080",
+      "healthcheck_endpoint": "/health",
+      "timeout_ms": 10000,
+      "tenant_scope": "multi",
+      "cacheable": false,
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_ms": 1000
+      },
+      "rbac_required": true,
+      "rate_limit": {
+        "requests_per_minute": 40
+      }
+    },
+    "business_process": {
+      "service_name": "business_process_service",
+      "base_path": "/business_process",
+      "internal_url": "http://business_process_service:8080",
+      "healthcheck_endpoint": "/health",
+      "timeout_ms": 10000,
+      "tenant_scope": "multi",
+      "cacheable": false,
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_ms": 1000
+      },
+      "rbac_required": true,
+      "rate_limit": {
+        "requests_per_minute": 40
+      }
+    },
+    "business_role": {
+      "service_name": "business_role_service",
+      "base_path": "/business_role",
+      "internal_url": "http://business_role_service:8080",
+      "healthcheck_endpoint": "/health",
+      "timeout_ms": 10000,
+      "tenant_scope": "multi",
+      "cacheable": false,
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_ms": 1000
+      },
+      "rbac_required": true,
+      "rate_limit": {
+        "requests_per_minute": 40
+      }
+    },
+    "constraint": {
+      "service_name": "constraint_service",
+      "base_path": "/constraint",
+      "internal_url": "http://constraint_service:8080",
+      "healthcheck_endpoint": "/health",
+      "timeout_ms": 10000,
+      "tenant_scope": "multi",
+      "cacheable": false,
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_ms": 1000
+      },
+      "rbac_required": true,
+      "rate_limit": {
+        "requests_per_minute": 40
+      }
+    },
+    "driver": {
+      "service_name": "driver_service",
+      "base_path": "/driver",
+      "internal_url": "http://driver_service:8080",
+      "healthcheck_endpoint": "/health",
+      "timeout_ms": 10000,
+      "tenant_scope": "multi",
+      "cacheable": false,
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_ms": 1000
+      },
+      "rbac_required": true,
+      "rate_limit": {
+        "requests_per_minute": 40
+      }
+    },
+    "requirement": {
+      "service_name": "requirement_service",
+      "base_path": "/requirement",
+      "internal_url": "http://requirement_service:8080",
+      "healthcheck_endpoint": "/health",
+      "timeout_ms": 10000,
+      "tenant_scope": "multi",
+      "cacheable": false,
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_ms": 1000
+      },
+      "rbac_required": true,
+      "rate_limit": {
+        "requests_per_minute": 40
+      }
+    },
+    "application_function": {
+      "service_name": "application_function_service",
+      "base_path": "/application_function",
+      "internal_url": "http://application_function_service:8080",
+      "healthcheck_endpoint": "/health",
+      "timeout_ms": 10000,
+      "tenant_scope": "multi",
+      "cacheable": false,
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_ms": 1000
+      },
+      "rbac_required": true,
+      "rate_limit": {
+        "requests_per_minute": 40
+      }
+    }
+  },
+  "gateway_config": {
+    "health_check_interval_seconds": 60,
+    "circuit_breaker_threshold": 5,
+    "circuit_breaker_timeout_seconds": 30,
+    "default_timeout_ms": 15000,
+    "max_retries": 3,
+    "default_backoff_ms": 1000,
+    "rate_limit_enabled": true,
+    "rbac_enabled": true,
+    "observability_enabled": true
+  }
+} 

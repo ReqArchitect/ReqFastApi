@@ -27,7 +27,7 @@ class KPI(BaseModel):
     user_id: str
     created_at: datetime
     updated_at: datetime
-    initiative_id: UUID
+    initiative_id: UUID  # Ensure this is always a valid UUID string in test payloads
     metric: str
     target_value: float
 

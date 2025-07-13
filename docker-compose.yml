@@ -4,6 +4,9 @@ services:
   postgres_db:
     image: postgres:15
     container_name: postgres_db
+    labels:
+      reqarchitect-service: true
+      service-name: postgres_db
     environment:
       POSTGRES_USER: reqadmin
       POSTGRES_PASSWORD: reqpass
@@ -24,6 +27,9 @@ services:
   gateway_service:
     build: ./services/gateway_service
     container_name: gateway_service
+    labels:
+      reqarchitect-service: true
+      service-name: gateway_service
     ports:
       - "8080:8080"
     environment:
@@ -56,12 +62,17 @@ services:
   auth_service:
     build: ./services/auth_service
     container_name: auth_service
+    labels:
+      reqarchitect-service: true
+      service-name: auth_service
     ports:
       - "8001:8001"
     env_file:
       - services/auth_service/.env
     environment:
       - JWT_SECRET=supersecret
+      - DATABASE_URL=postgresql://auth_user:auth_pass@postgres_db:5432/auth_db
+      - REDIS_URL=redis://event_bus:6379/0
     volumes:
       - ./logs:/app/logs
     networks:
@@ -78,6 +89,9 @@ services:
   ai_modeling_service:
     build: ./services/ai_modeling_service
     container_name: ai_modeling_service
+    labels:
+      reqarchitect-service: true
+      service-name: ai_modeling_service
     ports:
       - "8002:8002"
     env_file:
@@ -100,6 +114,9 @@ services:
   analytics_service:
     build: ./services/analytics_service
     container_name: analytics_service
+    labels:
+      reqarchitect-service: true
+      service-name: analytics_service
     environment:
       - DB_URL=postgresql://analytics:password@db/analytics
       - JWT_SECRET=supersecret
@@ -119,6 +136,9 @@ services:
   feedback_service:
     build: ./services/feedback_service
     container_name: feedback_service
+    labels:
+      reqarchitect-service: true
+      service-name: feedback_service
     environment:
       - DB_URL=postgresql://feedback:password@db/feedback
       - JWT_SECRET=supersecret
@@ -138,6 +158,9 @@ services:
   event_bus_service:
     build: ./services/event_bus_service
     container_name: event_bus_service
+    labels:
+      reqarchitect-service: true
+      service-name: event_bus_service
     environment:
       - DB_URL=postgresql://eventbus:password@db/eventbus
       - JWT_SECRET=supersecret
@@ -159,6 +182,9 @@ services:
   usage_service:
     build: ./services/usage_service
     container_name: usage_service
+    labels:
+      reqarchitect-service: true
+      service-name: usage_service
     env_file:
       - services/usage_service/.env
     environment:
@@ -181,6 +207,9 @@ services:
   onboarding_state_service:
     build: ./services/onboarding_state_service/app
     container_name: onboarding_state_service
+    labels:
+      reqarchitect-service: true
+      service-name: onboarding_state_service
     environment:
       - DB_URL=postgresql://onboarding:password@db/onboarding
       - JWT_SECRET=supersecret
@@ -200,6 +229,9 @@ services:
   audit_log_service:
     build: ./services/audit_log_service/app
     container_name: audit_log_service
+    labels:
+      reqarchitect-service: true
+      service-name: audit_log_service
     env_file:
       - services/audit_log_service/.env
     environment:
@@ -222,6 +254,9 @@ services:
   event_bus:
     image: redis:7
     container_name: event_bus
+    labels:
+      reqarchitect-service: true
+      service-name: event_bus
     ports:
       - "6379:6379"
     networks:
@@ -236,6 +271,9 @@ services:
   notification_service:
     build: ./services/notification_service
     container_name: notification_service
+    labels:
+      reqarchitect-service: true
+      service-name: notification_service
     env_file:
       - services/notification_service/.env
     environment:
@@ -258,6 +296,9 @@ services:
   billing_service:
     build: ./services/billing_service
     container_name: billing_service
+    labels:
+      reqarchitect-service: true
+      service-name: billing_service
     ports:
       - "8010:8010"
     env_file:
@@ -280,6 +321,9 @@ services:
   invoice_service:
     build: ./services/invoice_service
     container_name: invoice_service
+    labels:
+      reqarchitect-service: true
+      service-name: invoice_service
     ports:
       - "8011:8011"
     env_file:
@@ -303,6 +347,9 @@ services:
   monitoring_dashboard_service:
     build: ./services/monitoring_dashboard_service
     container_name: monitoring_dashboard_service
+    labels:
+      reqarchitect-service: true
+      service-name: monitoring_dashboard_service
     ports:
       - "8012:8012"
     environment:
@@ -333,6 +380,23 @@ services:
       - notification_service
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8012/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: always
+
+  api_debug_service:
+    build: ./services/api_debug_service
+    container_name: api_debug_service
+    labels:
+      reqarchitect-service: true
+      service-name: api_debug_service
+    ports:
+      - "8090:8090"
+    networks:
+      - reqarchitect_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/health"]
       interval: 30s
       timeout: 10s
       retries: 5

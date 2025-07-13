@@ -239,6 +239,62 @@ async def proxy_request_with_retry(
     # Should not reach here, but just in case
     raise HTTPException(status_code=502, detail=f"Service {service_key} failed after {max_retries + 1} attempts")
 
+@app.get("/services")
+def list_services():
+    """List all available services and their status"""
+    try:
+        health_summary = get_service_health_summary()
+        service_list = []
+        
+        for service_key, health in health_summary["services"].items():
+            service_config = service_registry.get_service_config(service_key)
+            if service_config:
+                service_list.append({
+                    "service_key": service_key,
+                    "service_name": service_config.service_name,
+                    "base_path": service_config.base_path,
+                    "status": health["status"],
+                    "last_check": health["last_check"],
+                    "response_time_ms": health["response_time_ms"],
+                    "consecutive_failures": health["consecutive_failures"]
+                })
+        
+        return {
+            "services": service_list,
+            "total_services": len(service_list),
+            "healthy_services": health_summary["healthy_count"],
+            "unhealthy_services": health_summary["unhealthy_count"],
+            "overall_status": health_summary["overall_status"]
+        }
+    except Exception as e:
+        logger.error(f"Failed to list services: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve service list")
+
+@app.get("/services/{service_key}/health")
+def get_service_health(service_key: str):
+    """Get health status for a specific service"""
+    try:
+        health = service_registry.health_status.get(service_key)
+        if not health:
+            raise HTTPException(status_code=404, detail=f"Service {service_key} not found")
+        
+        service_config = service_registry.get_service_config(service_key)
+        
+        return {
+            "service_key": service_key,
+            "service_name": service_config.service_name if service_config else "unknown",
+            "status": health.status.value,
+            "last_check": health.last_check.isoformat(),
+            "response_time_ms": health.response_time_ms,
+            "consecutive_failures": health.consecutive_failures,
+            "error_message": health.error_message
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get service health for {service_key}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve service health")
+
 @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"])
 async def dynamic_proxy(request: Request, path: str):
     """
@@ -299,62 +355,6 @@ async def dynamic_proxy(request: Request, path: str):
         raise HTTPException(status_code=500, detail="Internal gateway error")
     finally:
         app.state.active_connections -= 1
-
-@app.get("/services")
-def list_services():
-    """List all available services and their status"""
-    try:
-        health_summary = get_service_health_summary()
-        service_list = []
-        
-        for service_key, health in health_summary["services"].items():
-            service_config = service_registry.get_service_config(service_key)
-            if service_config:
-                service_list.append({
-                    "service_key": service_key,
-                    "service_name": service_config.service_name,
-                    "base_path": service_config.base_path,
-                    "status": health["status"],
-                    "last_check": health["last_check"],
-                    "response_time_ms": health["response_time_ms"],
-                    "consecutive_failures": health["consecutive_failures"]
-                })
-        
-        return {
-            "services": service_list,
-            "total_services": len(service_list),
-            "healthy_services": health_summary["healthy_count"],
-            "unhealthy_services": health_summary["unhealthy_count"],
-            "overall_status": health_summary["overall_status"]
-        }
-    except Exception as e:
-        logger.error(f"Failed to list services: {e}")
-        raise HTTPException(status_code=500, detail="Failed to retrieve service list")
-
-@app.get("/services/{service_key}/health")
-def get_service_health(service_key: str):
-    """Get health status for a specific service"""
-    try:
-        health = service_registry.health_status.get(service_key)
-        if not health:
-            raise HTTPException(status_code=404, detail=f"Service {service_key} not found")
-        
-        service_config = service_registry.get_service_config(service_key)
-        
-        return {
-            "service_key": service_key,
-            "service_name": service_config.service_name if service_config else "unknown",
-            "status": health.status.value,
-            "last_check": health.last_check.isoformat(),
-            "response_time_ms": health.response_time_ms,
-            "consecutive_failures": health.consecutive_failures,
-            "error_message": health.error_message
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Failed to get service health for {service_key}: {e}")
-        raise HTTPException(status_code=500, detail="Failed to retrieve service health")
 
 if __name__ == "__main__":
     import uvicorn

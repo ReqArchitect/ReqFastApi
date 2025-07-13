@@ -11,7 +11,7 @@ from app.routing import get_service_config
 logger = logging.getLogger(__name__)
 
 # JWT configuration
-SECRET_KEY = "REPLACE_WITH_REAL_SECRET"
+SECRET_KEY = "REPLACE_ME"  # Match auth_service default
 ALGORITHM = "HS256"
 
 # In-memory rate limit store (for demo)
@@ -22,7 +22,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
     
     async def dispatch(self, request: Request, call_next):
         # Skip authentication for health checks and metrics
-        if request.url.path in ["/health", "/metrics", "/gateway-health"]:
+        if request.url.path in ["/health", "/metrics", "/gateway-health", "/services"]:
             response = await call_next(request)
             return response
         
@@ -69,7 +69,7 @@ class RBACMiddleware(BaseHTTPMiddleware):
     
     async def dispatch(self, request: Request, call_next):
         # Skip RBAC for health checks and metrics
-        if request.url.path in ["/health", "/metrics", "/gateway-health"]:
+        if request.url.path in ["/health", "/metrics", "/gateway-health", "/services"]:
             response = await call_next(request)
             return response
         
@@ -173,6 +173,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
     
     async def dispatch(self, request: Request, call_next):
         start_time = time.time()
+        response = None
         
         # Create request context for observability
         context = observability_manager.create_request_context(
@@ -203,7 +204,8 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         finally:
             # Calculate and log latency
             latency = (time.time() - start_time) * 1000
-            logger.info(f"{request.method} {request.url.path} {getattr(response, 'status_code', 500)} {latency:.2f}ms")
+            status_code = getattr(response, 'status_code', 500) if response else 500
+            logger.info(f"{request.method} {request.url.path} {status_code} {latency:.2f}ms")
 
 class IdentityForwardingMiddleware(BaseHTTPMiddleware):
     """Middleware to forward identity information to downstream services"""

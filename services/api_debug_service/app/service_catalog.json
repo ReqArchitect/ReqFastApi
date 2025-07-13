@@ -1,0 +1,192 @@
+[
+  {
+    "service_name": "auth_service",
+    "base_url": "http://auth_service:8001",
+    "container_name": "auth_service",
+    "routes": [
+      "/auth/login",
+      "/auth/signup",
+      "/auth/profile",
+      "/auth/logout",
+      "/auth/invite",
+      "/auth/accept-invite",
+      "/auth/rbac-summary",
+      "/auth/validate",
+      "/auth/refresh"
+    ],
+    "healthcheck": "/health",
+    "port": 8001,
+    "description": "Authentication and authorization service"
+  },
+  {
+    "service_name": "gateway_service",
+    "base_url": "http://gateway_service:8080",
+    "container_name": "gateway_service",
+    "routes": [
+      "/gateway/route",
+      "/gateway/health",
+      "/gateway/metrics",
+      "/gateway/services"
+    ],
+    "healthcheck": "/health",
+    "port": 8080,
+    "description": "API Gateway service"
+  },
+  {
+    "service_name": "ai_modeling_service",
+    "base_url": "http://ai_modeling_service:8002",
+    "container_name": "ai_modeling_service",
+    "routes": [
+      "/ai-models",
+      "/ai-models/{id}",
+      "/ai-models/train",
+      "/ai-models/predict"
+    ],
+    "healthcheck": "/health",
+    "port": 8002,
+    "description": "AI modeling service"
+  },
+  {
+    "service_name": "usage_service",
+    "base_url": "http://usage_service:8005",
+    "container_name": "usage_service",
+    "routes": [
+      "/usage",
+      "/usage/{id}",
+      "/usage/active",
+      "/usage/by-status/{status}"
+    ],
+    "healthcheck": "/health",
+    "port": 8005,
+    "description": "Usage tracking service"
+  },
+  {
+    "service_name": "notification_service",
+    "base_url": "http://notification_service:8006",
+    "container_name": "notification_service",
+    "routes": [
+      "/notifications",
+      "/notifications/{id}",
+      "/notifications/active",
+      "/notifications/by-status/{status}"
+    ],
+    "healthcheck": "/health",
+    "port": 8006,
+    "description": "Notification management service"
+  },
+  {
+    "service_name": "audit_log_service",
+    "base_url": "http://audit_log_service:8007",
+    "container_name": "audit_log_service",
+    "routes": [
+      "/audit-logs",
+      "/audit-logs/{id}",
+      "/audit-logs/active",
+      "/audit-logs/by-status/{status}"
+    ],
+    "healthcheck": "/health",
+    "port": 8007,
+    "description": "Audit log management service"
+  },
+  {
+    "service_name": "billing_service",
+    "base_url": "http://billing_service:8010",
+    "container_name": "billing_service",
+    "routes": [
+      "/billing",
+      "/billing/{id}",
+      "/billing/active",
+      "/billing/by-status/{status}"
+    ],
+    "healthcheck": "/health",
+    "port": 8010,
+    "description": "Billing management service"
+  },
+  {
+    "service_name": "analytics_service",
+    "base_url": "http://analytics_service:8000",
+    "container_name": "analytics_service",
+    "routes": [
+      "/analytics",
+      "/analytics/{id}",
+      "/analytics/reports",
+      "/analytics/dashboard"
+    ],
+    "healthcheck": "/health",
+    "port": 8000,
+    "description": "Analytics and reporting service"
+  },
+  {
+    "service_name": "feedback_service",
+    "base_url": "http://feedback_service:8000",
+    "container_name": "feedback_service",
+    "routes": [
+      "/feedback",
+      "/feedback/{id}",
+      "/feedback/active",
+      "/feedback/by-status/{status}"
+    ],
+    "healthcheck": "/health",
+    "port": 8000,
+    "description": "Feedback management service"
+  },
+  {
+    "service_name": "onboarding_state_service",
+    "base_url": "http://onboarding_state_service:8000",
+    "container_name": "onboarding_state_service",
+    "routes": [
+      "/onboarding",
+      "/onboarding/{id}",
+      "/onboarding/active",
+      "/onboarding/by-status/{status}"
+    ],
+    "healthcheck": "/health",
+    "port": 8000,
+    "description": "Onboarding state management service"
+  },
+  {
+    "service_name": "event_bus_service",
+    "base_url": "http://event_bus_service:8000",
+    "container_name": "event_bus_service",
+    "routes": [
+      "/events",
+      "/events/publish",
+      "/events/subscribe"
+    ],
+    "healthcheck": "/health",
+    "port": 8000,
+    "description": "Event bus service"
+  },
+  {
+    "service_name": "monitoring_dashboard_service",
+    "base_url": "http://monitoring_dashboard_service:8012",
+    "container_name": "monitoring_dashboard_service",
+    "routes": [
+      "/monitoring",
+      "/monitoring/dashboard",
+      "/monitoring/metrics",
+      "/monitoring/alerts"
+    ],
+    "healthcheck": "/health",
+    "port": 8012,
+    "description": "Monitoring dashboard service"
+  },
+  {
+    "service_name": "postgres_db",
+    "base_url": "http://postgres_db:5432",
+    "container_name": "postgres_db",
+    "routes": [],
+    "healthcheck": null,
+    "port": 5432,
+    "description": "PostgreSQL database"
+  },
+  {
+    "service_name": "event_bus",
+    "base_url": "http://event_bus:6379",
+    "container_name": "event_bus",
+    "routes": [],
+    "healthcheck": null,
+    "port": 6379,
+    "description": "Redis event bus"
+  }
+] 

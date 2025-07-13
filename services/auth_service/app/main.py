@@ -1,7 +1,7 @@
 
 from fastapi import FastAPI, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
-from app import models, schemas
+from app import models
 from app.database import SessionLocal, engine
 from datetime import datetime, timedelta
 from passlib.hash import bcrypt

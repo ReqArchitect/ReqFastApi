@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReqArchitect Platform Monitor</title>
+    <title>ReqArchitect Enhanced Platform Monitor</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -15,8 +15,11 @@
     <!-- Babel for JSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
-        /* Custom styles for better UX */
+        /* Custom styles for enhanced UX */
         .status-indicator {
             transition: all 0.3s ease;
         }
@@ -27,6 +30,7 @@
         
         .service-card:hover {
             transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
         
         /* Loading animation */
@@ -45,20 +49,74 @@
         .status-unhealthy { background-color: #EF4444; }
         .status-timeout { background-color: #F97316; }
         .status-unknown { background-color: #6B7280; }
+        .status-virtual { background-color: #8B5CF6; }
+        
+        /* Layer colors */
+        .layer-business { border-left: 4px solid #3B82F6; }
+        .layer-application { border-left: 4px solid #10B981; }
+        .layer-technology { border-left: 4px solid #F59E0B; }
+        .layer-infrastructure { border-left: 4px solid #8B5CF6; }
+        .layer-security { border-left: 4px solid #EF4444; }
+        .layer-motivation { border-left: 4px solid #EC4899; }
+        
+        /* Tooltip styles */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #1F2937;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Filter styles */
+        .filter-active {
+            background-color: #3B82F6;
+            color: white;
+        }
+        
+        /* Auto-refresh indicator */
+        .refresh-indicator {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="bg-gray-50">
-    <div id="monitoring-dashboard"></div>
+    <div id="enhanced-monitoring-dashboard"></div>
     
-    <!-- Dashboard JavaScript -->
-    <script type="text/babel" src="/static/dashboard.js"></script>
+    <!-- Enhanced Dashboard JavaScript -->
+    <script type="text/babel" src="/static/enhanced-dashboard.js"></script>
     
     <!-- Error boundary for React -->
     <script>
         // Global error handler
         window.addEventListener('error', function(e) {
             console.error('Global error:', e.error);
-            const container = document.getElementById('monitoring-dashboard');
+            const container = document.getElementById('enhanced-monitoring-dashboard');
             if (container) {
                 container.innerHTML = `
                     <div class="min-h-screen bg-gray-50 p-6">
@@ -66,7 +124,7 @@
                             <div class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
                                 <div class="text-red-500 text-6xl mb-4">⚠️</div>
                                 <h2 class="text-xl font-bold text-red-800 mb-2">Dashboard Error</h2>
-                                <p class="text-red-700 mb-4">The monitoring dashboard encountered an error.</p>
+                                <p class="text-red-700 mb-4">The enhanced monitoring dashboard encountered an error.</p>
                                 <button onclick="location.reload()" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
                                     Reload Dashboard
                                 </button>
@@ -84,7 +142,7 @@
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                event: 'page_load',
+                event: 'enhanced_dashboard_load',
                 timestamp: new Date().toISOString(),
                 user_agent: navigator.userAgent,
                 url: window.location.href,

@@ -38,3 +38,7 @@ class BusinessModelCanvas(BaseModel):
     created_at: datetime
     updated_at: datetime
     canvas_data: dict
+
+    model_config = {
+        "extra": "forbid"
+    }
